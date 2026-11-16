@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Karaoke</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Smart Karaoke</h1>
+  <div class="controls">
+    <label>歌曲 <select id="song"></select></label>
+    <label>難度
+      <select id="difficulty">
+        <option value="100">簡單（±100 cent）</option>
+        <option value="50">困難（±50 cent）</option>
+      </select>
+    </label>
+    <label>延遲補償 <input id="latency" type="number" value="0" step="10"> ms</label>
+    <button id="start">開始唱</button>
+    <button id="stop" disabled>結束</button>
+  </div>
+</header>
+
+<main>
+  <div class="status">
+    <span id="lyric">—</span>
+    <span id="live">即時命中率 0%</span>
+  </div>
+  <canvas id="canvas" width="1200" height="360"></canvas>
+  <div class="progress"><div id="bar"></div></div>
+  <p id="msg" style="color:#f0a35e;font-weight:bold;min-height:1.4em"></p>
+  <p class="hint">請戴耳機，避免麥克風收到伴奏。第一次使用時瀏覽器會詢問麥克風權限。</p>
+
+  <section id="result" hidden>
+    <h2>評分結果</h2>
+    <div class="scores">
+      <div><b id="s-overall">-</b><span>總分</span></div>
+      <div><b id="s-pitch">-</b><span>音準</span></div>
+      <div><b id="s-rhythm">-</b><span>節奏</span></div>
+      <div><b id="s-contour">-</b><span>旋律走向</span></div>
+      <div><b id="s-expression">-</b><span>表現力</span></div>
+    </div>
+    <ul id="tips"></ul>
+  </section>
+</main>
+
+<audio id="audio" preload="auto"></audio>
+<script type="module" src="main.js"></script>
+</body>
+</html>

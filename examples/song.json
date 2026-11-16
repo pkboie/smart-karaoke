@@ -1,0 +1,32 @@
+{
+ "title": "Demo：小星星",
+ "bpm": 90,
+ "duration": 23.667,
+ "accompaniment": "accompaniment.wav",
+ "notes": [
+  {
+   "start": 1.333,
+   "end": 1.947,
+   "midi": 60,
+   "lyric": "一"
+  },
+  {
+   "start": 2.0,
+   "end": 2.613,
+   "midi": 60,
+   "lyric": "閃"
+  },
+  {
+   "start": 2.667,
+   "end": 3.28,
+   "midi": 67,
+   "lyric": "一"
+  },
+  {
+   "start": 3.333,
+   "end": 3.947,
+   "midi": 67,
+   "lyric": "閃"
+  }
+ ]
+}
