@@ -88,8 +88,11 @@ python offline/make_song.py 原曲.mp3 --id song1 --title "歌名" --bpm 76
 - 表現力特徵很粗略（顫音幅度、音量變化）
 - 一定要戴耳機，否則麥克風會收到伴奏
 
-## Git 協作建議
+## Git 協作
 
-- `main` 保持可以跑；每個人在自己的 branch 開發，用 Pull Request 合併
+完整流程見 **[docs/git_workflow.md](docs/git_workflow.md)**。重點：
+
+- `master` 保持可以跑；每個人在自己的 branch 開發，用 Pull Request 合併
 - 改到共用的資料格式（JSON 欄位）前，先在群組說
-- `data/`、`models/` 不要 commit（已在 `.gitignore`）
+- `data/`、`models/`、`*.zip` 不要 commit（已在 `.gitignore`）
+- 每個人的進度寫在 `docs/members/<編號>-<名字>.md`（格式見 `docs/members/_template.md`）
