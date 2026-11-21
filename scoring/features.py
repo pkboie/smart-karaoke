@@ -42,6 +42,44 @@ def trace_to_curve(frames, duration, offset_ms=0.0, hop=DTW_HOP):
     return midi, rms
 
 
+def estimate_key_shift(ref, usr, max_shift=12, max_lag=30):
+    """估計整體移調量，容許演唱有時間偏移。"""
+    best_score = (float("inf"), 0, float("inf"))
+    best_shift = 0
+
+    for lag in range(-max_lag, max_lag + 1):
+        if lag >= 0:
+            a = ref[:max(0, len(usr) - lag)]
+            b = usr[lag:lag + len(a)]
+        else:
+            a = ref[-lag:]
+            b = usr[:len(a)]
+
+        n = min(len(a), len(b))
+        a, b = a[:n], b[:n]
+
+        valid = np.isfinite(a) & np.isfinite(b)
+        count = int(np.sum(valid))
+
+        if count < 3:
+            continue
+
+        diff = b[valid] - a[valid]
+        shift = int(np.clip(
+            np.round(np.median(diff)),
+            -max_shift, max_shift
+        ))
+
+        error = float(np.mean(np.abs(diff - shift)))
+
+        score = (round(error, 6), -count, abs(lag))
+
+        if score < best_score:
+            best_score = score
+            best_shift = shift
+
+    return best_shift, best_score[0]
+
 # ---------- 2. DTW ----------
 
 def banded_dtw(ref, usr, band):
@@ -103,8 +141,21 @@ def extract_features(song, frames, offset_ms=0.0):
     n = min(len(ref), len(usr))
     ref, usr, usr_rms = ref[:n], usr[:n], usr_rms[:n]
 
+
     band = int(DTW_BAND_SEC / DTW_HOP)
-    path = banded_dtw(ref, usr, band)
+
+    # 估計整體移調量
+    key_shift, shift_error = estimate_key_shift(ref, usr)
+
+    # 匹配誤差太大時，不進行移調校正
+    if shift_error > 2.0:
+        key_shift = 0
+
+    # 校正後的音高只用於 DTW 對齊
+    usr_aligned = usr - key_shift
+
+    path = banded_dtw(ref, usr_aligned, band)
+
     ref_to_usr = {}
     for i, j in path:
         ref_to_usr.setdefault(i, []).append(j)
