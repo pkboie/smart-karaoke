@@ -1,7 +1,8 @@
 """把特徵轉成分數與建議（負責人：#3）。
 
-目前是「規則式」分數，確保 demo 一定能動。
-訓練好模型後（scoring/train.py 會存 models/overall.joblib），overall 改由模型預測。
+目前預設為「規則式」分數，確保 demo 一定能動。
+訓練好模型後（scoring/train.py 會存 models/<target>.joblib），
+overall、pitch、rhythm、expression 會自動改由對應模型預測（contour 維持規則式）。
 """
 from __future__ import annotations
 
@@ -11,7 +12,7 @@ import numpy as np
 
 from .features import flatten
 
-MODEL_PATH = Path(__file__).resolve().parents[1] / "models" / "overall.joblib"
+MODELS_DIR = Path(__file__).resolve().parents[1] / "models"
 
 
 def lin(x, good, bad):
@@ -30,6 +31,18 @@ def rule_scores(f, strict=True):
         0.5 * lin(abs(f["expression"]["dynamics_std"] - 0.35), 0, 0.5)
     return {"pitch": round(pitch), "rhythm": round(rhythm),
             "contour": round(contour), "expression": round(expression)}
+
+
+def _predict_with_model(target: str, row: dict[str, float]) -> float | None:
+    """若 models/<target>.joblib 存在則載入預測並縮放至 0–100，否則回傳 None。"""
+    model_path = MODELS_DIR / f"{target}.joblib"
+    if not model_path.exists():
+        return None
+    import joblib
+    bundle = joblib.load(model_path)
+    x = np.array([[row[c] for c in bundle["columns"]]])
+    pred = float(bundle["model"].predict(x)[0] * bundle.get("scale", 1.0))
+    return float(np.clip(pred, 0, 100))
 
 
 def make_tips(f, scores, max_tips=3):
@@ -53,11 +66,22 @@ def make_tips(f, scores, max_tips=3):
 
 def score(features, strict=True):
     s = rule_scores(features, strict=strict)
+    row = None
+
+    for target in ("pitch", "rhythm", "expression"):
+        if (MODELS_DIR / f"{target}.joblib").exists():
+            if row is None:
+                row = flatten(features)
+            pred = _predict_with_model(target, row)
+            if pred is not None:
+                s[target] = round(pred)
+
     overall = 0.4 * s["pitch"] + 0.25 * s["rhythm"] + 0.2 * s["contour"] + 0.15 * s["expression"]
-    if MODEL_PATH.exists():  # 有訓練好的模型就用模型預測總分
-        import joblib
-        bundle = joblib.load(MODEL_PATH)
-        row = flatten(features)
-        x = np.array([[row[c] for c in bundle["columns"]]])
-        overall = float(np.clip(bundle["model"].predict(x)[0] * bundle.get("scale", 1.0), 0, 100))
+    if (MODELS_DIR / "overall.joblib").exists():
+        if row is None:
+            row = flatten(features)
+        pred_overall = _predict_with_model("overall", row)
+        if pred_overall is not None:
+            overall = pred_overall
+
     return {"overall": round(overall), **s, "tips": make_tips(features, s)}
