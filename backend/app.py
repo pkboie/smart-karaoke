@@ -13,7 +13,9 @@ from __future__ import annotations
 
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
+from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
@@ -63,8 +65,16 @@ def score_trace(trace: Trace):
 
     # 每次演唱都存下來：之後可當作實驗資料（#3、#6 會用到）
     TRACES.mkdir(parents=True, exist_ok=True)
-    n = len(list(TRACES.glob(f"{trace.song}_*.json")))
-    (TRACES / f"{trace.song}_{n:03d}.json").write_text(trace.model_dump_json(), encoding="utf-8")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    trace_path = TRACES / f"{path.parent.name}_{timestamp}_{uuid4().hex}.json"
+    payload = trace.model_dump_json()
+    trace_file = trace_path.open("x", encoding="utf-8")
+    try:
+        with trace_file:
+            trace_file.write(payload)
+    except OSError:
+        trace_path.unlink(missing_ok=True)
+        raise
 
     feats = extract_features(song, frames, offset_ms=trace.offset_ms)
     result = score(feats, strict=trace.strict)
@@ -72,5 +82,7 @@ def score_trace(trace: Trace):
     return result
 
 
+
+SONGS.mkdir(parents=True, exist_ok=True)
 app.mount("/songs", StaticFiles(directory=SONGS), name="songs")
 app.mount("/", StaticFiles(directory=ROOT / "frontend", html=True), name="frontend")
