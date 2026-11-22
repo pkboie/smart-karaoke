@@ -18,6 +18,7 @@
       </select>
     </label>
     <label>延遲補償 <input id="latency" type="number" value="0" step="10"> ms</label>
+    <label>演唱標籤（選填） <input id="trace-label" type="text" size="15" placeholder="例如 小明_偏高"></label>
     <button id="start">開始唱</button>
     <button id="stop" disabled>結束</button>
   </div>
@@ -47,6 +48,6 @@
 </main>
 
 <audio id="audio" preload="auto"></audio>
-<script type="module" src="main.js"></script>
+<script type="module" src="main.js?v=2"></script>
 </body>
 </html>

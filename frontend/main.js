@@ -188,7 +188,13 @@ async function finish() {
   const res = await fetch("/api/score", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ song: songId, offset_ms: 0, strict: $("difficulty").value === "50", frames }),
+    body: JSON.stringify({
+      song: songId,
+      offset_ms: 0,
+      strict: $("difficulty").value === "50",
+      frames,
+      label: $("trace-label").value.trim() || undefined,
+    }),
   });
   const s = await res.json();
   for (const k of ["overall", "pitch", "rhythm", "contour", "expression"]) $(`s-${k}`).textContent = s[k];
