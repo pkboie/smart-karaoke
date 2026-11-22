@@ -18,6 +18,7 @@ let frames = [];             // 送給後端的 trace
 let noteStats = [];          // 每個音符：唱到幾格、命中幾格
 let micCtx = null, analyser = null, detector = null, buf = null, stream = null;
 let running = false;
+let pitchTolerance = 100;
 
 // ---------- 載入歌曲 ----------
 async function loadSongs() {
@@ -117,11 +118,10 @@ function sample() {
   frames.push({ t, f0_hz: voiced ? hz : null, midi, voiced, rms });
 
   // 逐音符即時判分
-  const tol = Number($("difficulty").value);
   const idx = song.notes.findIndex((n) => t >= n.start && t < n.end);
   if (idx >= 0 && voiced) {
     noteStats[idx].voiced++;
-    if (Math.abs(foldCents(midi - song.notes[idx].midi)) < tol) noteStats[idx].hit++;
+    if (Math.abs(foldCents(midi - song.notes[idx].midi)) < pitchTolerance) noteStats[idx].hit++;
   }
 }
 
@@ -198,6 +198,7 @@ $("start").onclick = async () => {
   try {
     if (!song) throw new Error("歌曲還沒載入，請確認選單裡有歌曲（沒有的話先執行 python offline/make_demo_song.py）。");
     if (!navigator.mediaDevices?.getUserMedia) throw new Error("這個網址不能使用麥克風，請改用 http://localhost:8000 開啟。");
+    pitchTolerance = Number($("difficulty").querySelector("input:checked").value);
     $("song").disabled = true;
     $("difficulty").disabled = true;
     $("start").disabled = true;
@@ -231,7 +232,7 @@ async function finish() {
   audio.pause();
   stopMic();
   $("stop").disabled = true;
-  const tolerance = Number($("difficulty").value);
+  const tolerance = pitchTolerance;
   $("msg").textContent = "正在評分…";
   try {
     const response = await fetch("/api/score", {
@@ -301,7 +302,7 @@ function renderNotes(notes, tolerance) {
     return item;
   });
   $("note-results").replaceChildren(...items);
-  $("note-counts").textContent = `命中 ${hits} · 偏離 ${misses} · 未判定 ${notes.length - hits - misses}`;
+  $("note-counts").textContent = `±${tolerance} cent · 命中 ${hits} · 偏離 ${misses} · 未判定 ${notes.length - hits - misses}`;
   $("note-summary").hidden = !notes.length;
 }
 

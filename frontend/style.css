@@ -6,6 +6,16 @@ h1 { margin: 0; font-size: 22px; }
 .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 14px; }
 select, input, button { font: inherit; padding: 6px 10px; border-radius: 6px; border: 1px solid #33405f; background: #0f1424; color: var(--ink); }
 input[type=number] { width: 80px; }
+.difficulty { display: flex; align-items: center; gap: 4px; min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+.difficulty legend { float: left; margin-inline-end: 8px; padding: 0; }
+.difficulty label { position: relative; }
+.difficulty input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.difficulty label span { display: block; padding: 6px 10px; border: 1px solid #33405f; border-radius: 6px; background: var(--bg); cursor: pointer; white-space: nowrap; }
+.difficulty small { color: var(--muted); }
+.difficulty input:checked + span { border-color: #78a5f4; background: #263858; }
+.difficulty input:focus-visible + span { outline: 2px solid #acd0ff; outline-offset: 2px; }
+.difficulty input:disabled + span { cursor: default; }
+.difficulty input:disabled:not(:checked) + span { opacity: 0.5; }
 button { background: var(--target); border: none; cursor: pointer; min-height: 36px; }
 button:disabled { opacity: 0.4; cursor: default; }
 main { max-width: 1240px; margin: 0 auto; padding: 20px; }
