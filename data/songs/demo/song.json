@@ -1,0 +1,176 @@
+{
+ "title": "Demo：小星星",
+ "bpm": 90,
+ "duration": 23.667,
+ "accompaniment": "accompaniment.wav",
+ "notes": [
+  {
+   "start": 1.333,
+   "end": 1.947,
+   "midi": 60,
+   "lyric": "一"
+  },
+  {
+   "start": 2.0,
+   "end": 2.613,
+   "midi": 60,
+   "lyric": "閃"
+  },
+  {
+   "start": 2.667,
+   "end": 3.28,
+   "midi": 67,
+   "lyric": "一"
+  },
+  {
+   "start": 3.333,
+   "end": 3.947,
+   "midi": 67,
+   "lyric": "閃"
+  },
+  {
+   "start": 4.0,
+   "end": 4.613,
+   "midi": 69,
+   "lyric": "亮"
+  },
+  {
+   "start": 4.667,
+   "end": 5.28,
+   "midi": 69,
+   "lyric": "晶"
+  },
+  {
+   "start": 5.333,
+   "end": 6.56,
+   "midi": 67,
+   "lyric": "晶"
+  },
+  {
+   "start": 6.667,
+   "end": 7.28,
+   "midi": 65,
+   "lyric": "滿"
+  },
+  {
+   "start": 7.333,
+   "end": 7.947,
+   "midi": 65,
+   "lyric": "天"
+  },
+  {
+   "start": 8.0,
+   "end": 8.613,
+   "midi": 64,
+   "lyric": "都"
+  },
+  {
+   "start": 8.667,
+   "end": 9.28,
+   "midi": 64,
+   "lyric": "是"
+  },
+  {
+   "start": 9.333,
+   "end": 9.947,
+   "midi": 62,
+   "lyric": "小"
+  },
+  {
+   "start": 10.0,
+   "end": 10.613,
+   "midi": 62,
+   "lyric": "星"
+  },
+  {
+   "start": 10.667,
+   "end": 11.893,
+   "midi": 60,
+   "lyric": "星"
+  },
+  {
+   "start": 12.0,
+   "end": 12.613,
+   "midi": 67,
+   "lyric": "掛"
+  },
+  {
+   "start": 12.667,
+   "end": 13.28,
+   "midi": 67,
+   "lyric": "在"
+  },
+  {
+   "start": 13.333,
+   "end": 13.947,
+   "midi": 65,
+   "lyric": "天"
+  },
+  {
+   "start": 14.0,
+   "end": 14.613,
+   "midi": 65,
+   "lyric": "上"
+  },
+  {
+   "start": 14.667,
+   "end": 15.28,
+   "midi": 64,
+   "lyric": "放"
+  },
+  {
+   "start": 15.333,
+   "end": 15.947,
+   "midi": 64,
+   "lyric": "光"
+  },
+  {
+   "start": 16.0,
+   "end": 17.227,
+   "midi": 62,
+   "lyric": "明"
+  },
+  {
+   "start": 17.333,
+   "end": 17.947,
+   "midi": 67,
+   "lyric": "好"
+  },
+  {
+   "start": 18.0,
+   "end": 18.613,
+   "midi": 67,
+   "lyric": "像"
+  },
+  {
+   "start": 18.667,
+   "end": 19.28,
+   "midi": 65,
+   "lyric": "許"
+  },
+  {
+   "start": 19.333,
+   "end": 19.947,
+   "midi": 65,
+   "lyric": "多"
+  },
+  {
+   "start": 20.0,
+   "end": 20.613,
+   "midi": 64,
+   "lyric": "小"
+  },
+  {
+   "start": 20.667,
+   "end": 21.28,
+   "midi": 64,
+   "lyric": "眼"
+  },
+  {
+   "start": 21.333,
+   "end": 22.56,
+   "midi": 62,
+   "lyric": "睛"
+  }
+ ]
+}

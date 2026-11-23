@@ -1,4 +1,6 @@
-data/
+data/datasets/acapella_hf/
+data/datasets/mir1k/
+data/datasets/mir1k_sample/
 models/
 __pycache__/
 *.pyc
