@@ -23,6 +23,7 @@ import argparse
 import csv
 import json
 import random
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -93,6 +94,25 @@ def compare_to_reference(ref_midi: np.ndarray, est_midi: np.ndarray) -> dict:
     }
 
 
+PITCHY_SR = 48000  # 瀏覽器麥克風常見的取樣率；前端一次分析 2048 個樣本 ≈ 43 ms
+
+
+def detect_pitchy(y: np.ndarray, sr: int) -> np.ndarray:
+    """用 Node 跑前端的 pitchy（experiments/pitchy_f0.mjs），回傳每 HOP_SEC 一筆的 f0（Hz，無聲 = NaN）。
+
+    先重新取樣到 48 kHz：前端固定用 2048 個樣本的視窗，同樣 2048 個樣本在 16 kHz 是 128 ms，
+    會和 demo 時的實際行為（約 43 ms）差很多。
+    """
+    import librosa
+
+    y48 = librosa.resample(y, orig_sr=sr, target_sr=PITCHY_SR).astype("<f4")
+    out = subprocess.run(["node", str(ROOT / "experiments" / "pitchy_f0.mjs"), str(PITCHY_SR)],
+                         input=y48.tobytes(), capture_output=True, check=True)
+    res = json.loads(out.stdout)
+    assert abs(res["hop_sec"] - HOP_SEC) < 1e-9
+    return np.array([np.nan if v is None else v for v in res["f0"]], dtype=float)
+
+
 def sample_at(times_ref: np.ndarray, f0_hz: np.ndarray) -> np.ndarray:
     """把偵測結果（每 HOP_SEC 一筆，第 k 筆在 k*HOP_SEC）取樣到參考的時間點，回傳 MIDI（無聲 = NaN）。"""
     idx = np.round(times_ref / HOP_SEC).astype(int)
@@ -153,7 +173,8 @@ def main():
         "--limit", type=int, default=10, help="MIR-1K 抽幾段（0 = 全部 1000 段）"
     )
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--methods", nargs="+", default=["yin", "pyin"])
+    ap.add_argument("--methods", nargs="+", default=["yin", "pyin"],
+                    help="yin、pyin、crepe（需 torchcrepe）、pitchy（需 node）")
     ap.add_argument(
         "--snr-db",
         nargs="+",
@@ -181,7 +202,10 @@ def main():
             for snr in snrs:
                 y = mix(vocals, acc, snr)
                 t0 = time.perf_counter()
-                _, f0, _, _ = detect_pitch(y, sr, method=method)
+                if method == "pitchy":
+                    f0 = detect_pitchy(y, sr)
+                else:
+                    _, f0, _, _ = detect_pitch(y, sr, method=method)
                 ms_per_sec = (time.perf_counter() - t0) * 1000 / (len(y) / sr)
                 m = compare_to_reference(ref, sample_at(times, f0))
                 rows.append(
