@@ -31,7 +31,6 @@ let running = false;
 let rmsThreshold = RMS_MIN;
 let backgroundRms = 0;
 
-let audioFrameCount = 0;
 
 // ---------- 載入歌曲 ----------
 async function loadSongs() {
@@ -188,11 +187,6 @@ function processAudioFrame(audioFrame) {
     return;
   }
 
-  audioFrameCount++;
-
-  if (audioFrameCount % 50 === 0) {
-    console.log("Audio frames processed:", audioFrameCount);
-  }
 
   // Calculate RMS
   let sum = 0;
