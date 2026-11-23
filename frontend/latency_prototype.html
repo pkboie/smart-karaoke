@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Latency Calibration Prototype</title>
+</head>
+<body>
+  <h2>延遲校正原型</h2>
+  <p>請使用喇叭和麥克風，測試時保持安靜。</p>
+  <button id="test">開始測量</button>
+  <pre id="result">尚未測量</pre>
+
+  <script>
+    const button = document.getElementById("test");
+    const result = document.getElementById("result");
+
+    button.onclick = async () => {
+      button.disabled = true;
+
+      let stream = null;
+      let ctx = null;
+
+      try {
+        // 1. 取得麥克風
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
+          }
+        });
+
+        ctx = new AudioContext();
+        await ctx.resume();
+
+        const source = ctx.createMediaStreamSource(stream);
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 2048;
+        source.connect(analyser);
+
+        const data = new Float32Array(analyser.fftSize);
+
+        function getRMS() {
+          analyser.getFloatTimeDomainData(data);
+          let sum = 0;
+          for (const x of data) sum += x * x;
+          return Math.sqrt(sum / data.length);
+        }
+
+        // 2. 測量環境噪音
+        result.textContent = "測量環境噪音中...";
+
+        let baseline = 0;
+        for (let i = 0; i < 15; i++) {
+          baseline = Math.max(baseline, getRMS());
+          await new Promise(r => setTimeout(r, 20));
+        }
+
+        const threshold = Math.max(0.008, baseline * 3);
+
+        // 3. 在同一個 AudioContext 排程播放 Beep
+        const tPlay = ctx.currentTime + 0.4;
+
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        oscillator.frequency.value = 880;
+        gain.gain.setValueAtTime(0.0001, tPlay);
+        gain.gain.exponentialRampToValueAtTime(0.5, tPlay + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.0001, tPlay + 0.12);
+
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+
+        oscillator.start(tPlay);
+        oscillator.stop(tPlay + 0.13);
+
+        result.textContent = "等待 Beep 回傳...";
+
+        // 4. 以 RMS 門檻偵測麥克風收到的聲音
+        const tDetected = await new Promise(resolve => {
+          function check() {
+            const now = ctx.currentTime;
+            const rms = getRMS();
+
+            if (now >= tPlay && rms > threshold) {
+              resolve(now);
+              return;
+            }
+
+            if (now > tPlay + 1) {
+              resolve(null);
+              return;
+            }
+
+            requestAnimationFrame(check);
+          }
+          check();
+        });
+
+        // 5. 計算並顯示延遲
+        if (tDetected === null) {
+          result.textContent = "沒有偵測到測試聲，請檢查音量與麥克風。";
+        } else {
+          const latencyMs = (tDetected - tPlay) * 1000;
+          result.textContent =
+            `播放排程時間：${tPlay.toFixed(3)} s\n` +
+            `偵測時間：${tDetected.toFixed(3)} s\n` +
+            `估計延遲：${latencyMs.toFixed(1)} ms`;
+        }
+
+      } catch (err) {
+        result.textContent = "錯誤：" + err.message;
+      } finally {
+        stream?.getTracks().forEach(track => track.stop());
+        if (ctx && ctx.state !== "closed") await ctx.close();
+        button.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>
