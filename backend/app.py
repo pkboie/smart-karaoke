@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -19,7 +20,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -44,6 +45,14 @@ class Trace(BaseModel):
     offset_ms: float = 0.0
     strict: bool = True
     frames: list[Frame]
+    label: str | None = None
+
+    @field_validator("label")
+    @classmethod
+    def normalize_label(cls, label: str | None) -> str | None:
+        if label is None:
+            return None
+        return label.strip() or None
 
 
 @app.get("/api/songs")
@@ -66,8 +75,12 @@ def score_trace(trace: Trace):
     # 每次演唱都存下來：之後可當作實驗資料（#3、#6 會用到）
     TRACES.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
-    trace_path = TRACES / f"{path.parent.name}_{timestamp}_{uuid4().hex}.json"
-    payload = trace.model_dump_json()
+    trace_prefix = f"{path.parent.name}_{timestamp}"
+    if trace.label:
+        filename_label = re.sub(r'[<>:"/\\|?*\x00-\x1f]+', '_', trace.label)[:32]
+        trace_prefix = f"{trace_prefix}_{filename_label}"
+    trace_path = TRACES / f"{trace_prefix}_{uuid4().hex}.json"
+    payload = trace.model_dump_json(exclude={"label"} if trace.label is None else None)
     trace_file = trace_path.open("x", encoding="utf-8")
     try:
         with trace_file:

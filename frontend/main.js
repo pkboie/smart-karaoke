@@ -31,20 +31,60 @@ let running = false;
 let rmsThreshold = RMS_MIN;
 let backgroundRms = 0;
 
+let pitchTolerance = 100;
 
 // ---------- 載入歌曲 ----------
 async function loadSongs() {
-  const list = await (await fetch("/api/songs")).json();
-  $("song").innerHTML = list.map((s) => `<option value="${s.id}">${s.title}</option>`).join("");
-  await loadSong(list[0]?.id);
+  const selector = $("song");
+  try {
+    const response = await fetch("/api/songs");
+    if (!response.ok) throw new Error("目前無法讀取歌曲清單，請重新整理後再試。");
+    const list = await response.json();
+    if (!list.length) {
+      selector.replaceChildren(new Option("沒有可唱的歌曲", ""));
+      $("msg").textContent = "加入歌曲後重新整理，或先執行 python offline/make_demo_song.py 建立小星星。";
+      return;
+    }
+    selector.replaceChildren(...list.map(({ id, title }) => new Option(title, id)));
+    await loadSong(selector.value);
+  } catch (error) {
+    selector.replaceChildren(new Option("無法載入歌曲", ""));
+    $("msg").textContent = error.message;
+  }
 }
 async function loadSong(id) {
-  if (!id) return;
-  songId = id;
-  song = await (await fetch(`/songs/${id}/song.json`)).json();
-  audio.src = song.accompaniment ? `/songs/${id}/${song.accompaniment}` : "";
-  resetStats();
+  $("song").disabled = true;
+  $("start").disabled = true;
+  $("result").hidden = true;
+  $("lyric").textContent = "—";
+  $("next-lyric").hidden = true;
+  $("live").textContent = "即時命中率 0%";
+  $("bar").style.width = "0%";
+  $("msg").textContent = "正在載入歌曲…";
+  song = null;
+  songId = null;
+  audio.removeAttribute("src");
+  audio.load();
   draw();
+
+  try {
+    const base = `/songs/${encodeURIComponent(id)}/`;
+    const response = await fetch(`${base}song.json`);
+    if (!response.ok) throw new Error("無法載入這首歌的音準與歌詞資料。");
+    const selected = await response.json();
+    if (!selected.notes?.length) throw new Error("這首歌還沒有可用的音符資料。");
+    song = selected;
+    songId = id;
+    if (selected.accompaniment) audio.src = base + selected.accompaniment;
+    resetStats();
+    draw();
+    $("msg").textContent = "";
+  } catch (error) {
+    $("msg").textContent = error.message;
+  } finally {
+    $("song").disabled = false;
+    $("start").disabled = !song;
+  }
 }
 function resetStats() {
   frames = [];
@@ -226,8 +266,6 @@ function processAudioFrame(audioFrame) {
   });
 
   // Real-time note judging
-  const tol = Number($("difficulty").value);
-
   const idx = song.notes.findIndex(
     (n) => t >= n.start && t < n.end
   );
@@ -238,7 +276,7 @@ function processAudioFrame(audioFrame) {
     if (
       Math.abs(
         foldCents(midi - song.notes[idx].midi)
-      ) < tol
+      ) < pitchTolerance
     ) {
       noteStats[idx].hit++;
     }
@@ -289,8 +327,11 @@ function draw() {
   ctx.fillRect(W * NOW_X - 1, 0, 2, H);
 
   // 歌詞、進度、即時命中率
-  const cur = song.notes.find((n) => now >= n.start - 0.3 && now < n.end);
+  const cur = song.notes.find((n) => n.lyric && now >= n.start && now < n.end);
+  const next = song.notes.filter((n) => n.lyric && n.start > now).slice(0, 6).map((n) => n.lyric).join("");
   $("lyric").textContent = cur?.lyric || "—";
+  $("next-lyric").textContent = next ? `接下來 ${next}` : "";
+  $("next-lyric").hidden = !next;
   $("bar").style.width = `${(100 * now) / (audio.duration || song.duration || 1)}%`;
   const v = noteStats.reduce((a, s) => a + s.voiced, 0);
   const h = noteStats.reduce((a, s) => a + s.hit, 0);
@@ -331,6 +372,10 @@ $("start").onclick = async () => {
       );
     }
 
+    pitchTolerance = Number($("difficulty").querySelector("input:checked").value);
+    $("song").disabled = true;
+    $("difficulty").disabled = true;
+
     // Step 1: Start microphone
     msg.textContent = "正在要求麥克風權限…";
     await startMic();
@@ -355,7 +400,6 @@ $("start").onclick = async () => {
 
     // Step 6: Start pitch detection and drawing
     running = true;
-
     $("stop").disabled = false;
     msg.textContent = "";
 
@@ -370,6 +414,9 @@ $("start").onclick = async () => {
     $("start").disabled = false;
     $("stop").disabled = true;
 
+    $("song").disabled = false;
+    $("difficulty").disabled = false;
+    $("start").disabled = !song;
     msg.textContent =
       MIC_ERRORS[e.name] ||
       `無法開始：${e.message || e.name}`;
@@ -387,17 +434,79 @@ async function finish() {
   running = false;
   audio.pause();
   stopMic();
-  $("start").disabled = false;
   $("stop").disabled = true;
-  const res = await fetch("/api/score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ song: songId, offset_ms: 0, strict: $("difficulty").value === "50", frames }),
+  const tolerance = pitchTolerance;
+  $("msg").textContent = "正在評分…";
+  try {
+    const response = await fetch("/api/score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        song: songId,
+        offset_ms: 0,
+        strict: tolerance === 50,
+        frames,
+        label: $("trace-label").value.trim() || undefined,
+      }),
+    });
+    if (!response.ok) throw new Error("評分失敗，請重新唱一次。");
+    renderResult(await response.json(), tolerance);
+    $("msg").textContent = "";
+  } catch (error) {
+    $("msg").textContent = error.message;
+  } finally {
+    $("song").disabled = false;
+    $("difficulty").disabled = false;
+    $("start").disabled = false;
+  }
+}
+
+function renderResult(result, tolerance) {
+  for (const key of ["overall", "pitch", "rhythm", "contour", "expression"]) {
+    $(`s-${key}`).textContent = result[key];
+    $(`m-${key}`).value = result[key];
+  }
+  const tips = result.tips.map((tip) => {
+    const item = document.createElement("li");
+    item.textContent = tip;
+    return item;
   });
-  const s = await res.json();
-  for (const k of ["overall", "pitch", "rhythm", "contour", "expression"]) $(`s-${k}`).textContent = s[k];
-  $("tips").innerHTML = s.tips.map((t) => `<li>${t}</li>`).join("");
+  $("tips").replaceChildren(...tips);
+  renderNotes(result.per_note ?? [], tolerance);
   $("result").hidden = false;
+  $("result-heading").focus();
+}
+
+function renderNotes(notes, tolerance) {
+  let hits = 0;
+  let misses = 0;
+  const items = notes.map((note) => {
+    const item = document.createElement("li");
+    const lyric = document.createElement("strong");
+    const status = document.createElement("span");
+    const time = document.createElement("span");
+    lyric.textContent = note.lyric || `第 ${note.index + 1} 音`;
+    status.className = "note-status";
+    time.className = "note-time";
+    time.textContent = `${note.start.toFixed(1)} 秒`;
+    if (note.cent_error == null || note.coverage < 0.3) {
+      status.textContent = "未判定";
+    } else if (Math.abs(note.cent_error) < tolerance) {
+      status.textContent = "命中";
+      item.className = "note-hit";
+      hits += 1;
+    } else {
+      const direction = note.cent_error > 0 ? "偏高" : "偏低";
+      status.textContent = `${direction} ${Math.round(Math.abs(note.cent_error))} cent`;
+      item.className = "note-miss";
+      misses += 1;
+    }
+    item.append(lyric, status, time);
+    return item;
+  });
+  $("note-results").replaceChildren(...items);
+  $("note-counts").textContent = `±${tolerance} cent · 命中 ${hits} · 偏離 ${misses} · 未判定 ${notes.length - hits - misses}`;
+  $("note-summary").hidden = !notes.length;
 }
 
 loadSongs();
