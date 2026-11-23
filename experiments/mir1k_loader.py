@@ -67,8 +67,3 @@ if __name__ == "__main__":
     print("Vocal samples:", len(data["vocals"]))
     print("Pitch labels:", len(data["pitch_labels"]))
     print("First pitch time:", data["pitch_times"][0])
-
-import soundfile as sf
-
-sf.write("vocal_test.wav", data["vocals"], data["sample_rate"])
-sf.write("accompaniment_test.wav", data["accompaniment"], data["sample_rate"])
