@@ -12,12 +12,26 @@ const VIEW_SEC = 6;          // 畫面寬度代表幾秒
 const NOW_X = 0.25;          // 「現在」線在畫面的位置（比例）
 const CLARITY_MIN = 0.85;    // pitchy 的 clarity 門檻
 const RMS_MIN = 0.01;        // 低於這個音量視為沒在唱（簡易 VAD，#1 可改進）
+const NOISE_MULTIPLIER = 3;     // Threshold = noise RMS * 3
+const RMS_MAX = 0.05;           // Maximum adaptive threshold
+const CALIBRATION_MS = 1000;    // Measure background noise for 1 second
 
 let song = null, songId = null;
 let frames = [];             // 送給後端的 trace
 let noteStats = [];          // 每個音符：唱到幾格、命中幾格
-let micCtx = null, analyser = null, detector = null, buf = null, stream = null;
+let micCtx = null;
+let analyser = null;
+let detector = null;
+let stream = null;
+
+let micSource = null;
+let micWorklet = null;
+
 let running = false;
+let rmsThreshold = RMS_MIN;
+let backgroundRms = 0;
+
+let audioFrameCount = 0;
 
 // ---------- 載入歌曲 ----------
 async function loadSongs() {
@@ -47,42 +61,193 @@ const midiRange = () => {
   return [Math.min(...ms) - 3, Math.max(...ms) + 3];
 };
 
+
 async function startMic() {
   stream = await navigator.mediaDevices.getUserMedia({
-    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+    audio: {
+      echoCancellation: false,
+      noiseSuppression: false,
+      autoGainControl: false
+    }
   });
+
   micCtx = new AudioContext();
+  await micCtx.resume();
+
+  // Keep analyser for background noise calibration.
   analyser = micCtx.createAnalyser();
   analyser.fftSize = 2048;
-  micCtx.createMediaStreamSource(stream).connect(analyser);
-  detector = PitchDetector.forFloat32Array(analyser.fftSize);
-  buf = new Float32Array(detector.inputLength);
+
+  micSource = micCtx.createMediaStreamSource(stream);
+  micSource.connect(analyser);
+
+  // Pitch detector uses 2048-sample frames.
+  detector = PitchDetector.forFloat32Array(2048);
 }
+
+
+async function setupAudioWorklet() {
+  await micCtx.audioWorklet.addModule(
+    new URL("./mic-processor.js", import.meta.url)
+  );
+
+  micWorklet = new AudioWorkletNode(
+    micCtx,
+    "mic-processor",
+    {
+      numberOfInputs: 1,
+      numberOfOutputs: 1,
+      outputChannelCount: [1]
+    }
+  );
+
+  // Audio frames will be received here.
+  micWorklet.port.onmessage = (event) => {
+    if (!running) return;
+
+    const audioFrame = event.data;
+
+    // This function will be added in the next step.
+    processAudioFrame(audioFrame);
+  };
+
+  micSource.connect(micWorklet);
+
+  // The processor outputs silence, preventing feedback.
+  micWorklet.connect(micCtx.destination);
+}
+
+
+async function calibrateNoise() {
+  const calibrationBuffer = new Float32Array(analyser.fftSize);
+  const rmsValues = [];
+
+  const intervalMs = 50;
+  const sampleCount = CALIBRATION_MS / intervalMs;
+
+  // Collect background audio for approximately 1 second
+  for (let i = 0; i < sampleCount; i++) {
+    analyser.getFloatTimeDomainData(calibrationBuffer);
+
+    let sum = 0;
+
+    for (const value of calibrationBuffer) {
+      sum += value * value;
+    }
+
+    const rms = Math.sqrt(sum / calibrationBuffer.length);
+    rmsValues.push(rms);
+
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+
+  // Calculate average background RMS
+  backgroundRms =
+    rmsValues.reduce((sum, value) => sum + value, 0) /
+    rmsValues.length;
+
+  // Set adaptive threshold
+  rmsThreshold = Math.max(
+    RMS_MIN,
+    Math.min(RMS_MAX, backgroundRms * NOISE_MULTIPLIER)
+  );
+
+  console.log("Background RMS:", backgroundRms);
+  console.log("Adaptive RMS threshold:", rmsThreshold);
+}
+
+
 function stopMic() {
-  stream?.getTracks().forEach((t) => t.stop());
-  if (micCtx && micCtx.state !== "closed") micCtx.close();
+  if (micWorklet) {
+    micWorklet.port.onmessage = null;
+    micWorklet.disconnect();
+  }
+
+  if (micSource) {
+    micSource.disconnect();
+  }
+
+  stream?.getTracks().forEach(track => track.stop());
+
+  if (micCtx && micCtx.state !== "closed") {
+    micCtx.close();
+  }
+
+  micWorklet = null;
+  micSource = null;
+  analyser = null;
+  detector = null;
   stream = null;
   micCtx = null;
 }
 
-function sample() {
-  analyser.getFloatTimeDomainData(buf);
+
+
+function processAudioFrame(audioFrame) {
+  if (!running || !micCtx || !detector) {
+    return;
+  }
+
+  audioFrameCount++;
+
+  if (audioFrameCount % 50 === 0) {
+    console.log("Audio frames processed:", audioFrameCount);
+  }
+
+  // Calculate RMS
   let sum = 0;
-  for (const v of buf) sum += v * v;
-  const rms = Math.sqrt(sum / buf.length);
-  const [hz, clarity] = detector.findPitch(buf, micCtx.sampleRate);
-  const voiced = rms > RMS_MIN && clarity > CLARITY_MIN && hz > 60 && hz < 1100;
+
+  for (const value of audioFrame) {
+    sum += value * value;
+  }
+
+  const rms = Math.sqrt(sum / audioFrame.length);
+
+  // Detect pitch using pitchy
+  const [hz, clarity] = detector.findPitch(
+    audioFrame,
+    micCtx.sampleRate
+  );
+
+  // Adaptive RMS VAD
+  const voiced =
+    rms > rmsThreshold &&
+    clarity > CLARITY_MIN &&
+    hz > 60 &&
+    hz < 1100;
+
+  // Keep existing latency calculation
   const latency = Number($("latency").value) / 1000;
   const t = audio.currentTime - latency;
-  const midi = voiced ? hzToMidi(hz) : null;
-  frames.push({ t, f0_hz: voiced ? hz : null, midi, voiced, rms });
 
-  // 逐音符即時判分
+  const midi = voiced ? hzToMidi(hz) : null;
+
+  // Save data for backend scoring
+  frames.push({
+    t,
+    f0_hz: voiced ? hz : null,
+    midi,
+    voiced,
+    rms
+  });
+
+  // Real-time note judging
   const tol = Number($("difficulty").value);
-  const idx = song.notes.findIndex((n) => t >= n.start && t < n.end);
+
+  const idx = song.notes.findIndex(
+    (n) => t >= n.start && t < n.end
+  );
+
   if (idx >= 0 && voiced) {
     noteStats[idx].voiced++;
-    if (Math.abs(foldCents(midi - song.notes[idx].midi)) < tol) noteStats[idx].hit++;
+
+    if (
+      Math.abs(
+        foldCents(midi - song.notes[idx].midi)
+      ) < tol
+    ) {
+      noteStats[idx].hit++;
+    }
   }
 }
 
@@ -140,8 +305,9 @@ function draw() {
 
 function loop() {
   if (!running) return;
-  sample();
+
   draw();
+
   requestAnimationFrame(loop);
 }
 
@@ -151,28 +317,72 @@ const MIC_ERRORS = {
   NotFoundError: "找不到麥克風：請接上麥克風或耳機麥克風，並確認 Windows 的聲音設定裡有輸入裝置。",
   NotReadableError: "麥克風被其他程式佔用或無法啟動：請關閉視訊會議等正在用麥克風的程式後再試。",
 };
+
+
 $("start").onclick = async () => {
   const msg = $("msg");
+
+  $("start").disabled = true;
+
   try {
-    if (!song) throw new Error("歌曲還沒載入，請確認選單裡有歌曲（沒有的話先執行 python offline/make_demo_song.py）。");
-    if (!navigator.mediaDevices?.getUserMedia) throw new Error("這個網址不能使用麥克風，請改用 http://localhost:8000 開啟。");
-    msg.textContent = "正在要求麥克風權限…（瀏覽器若跳出詢問，請按「允許」）";
+    if (!song) {
+      throw new Error(
+        "歌曲還沒載入，請先執行 python offline/make_demo_song.py。"
+      );
+    }
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new Error(
+        "無法使用麥克風，請透過 http://localhost:8000 開啟。"
+      );
+    }
+
+    // Step 1: Start microphone
+    msg.textContent = "正在要求麥克風權限…";
     await startMic();
+
+    // Step 2: Calibrate background noise
+    msg.textContent = "正在校正環境噪音，請保持安靜 1 秒…";
+    await calibrateNoise();
+
+    // Step 3: Set up AudioWorklet
+    msg.textContent = "正在初始化音訊處理…";
+    await setupAudioWorklet();
+
+    // Step 4: Reset previous recording
     resetStats();
     $("result").hidden = true;
     audio.currentTime = 0;
-    if (song.accompaniment) await audio.play();
-    msg.textContent = "";
+
+    // Step 5: Start accompaniment
+    if (song.accompaniment) {
+      await audio.play();
+    }
+
+    // Step 6: Start pitch detection and drawing
     running = true;
-    $("start").disabled = true;
+
     $("stop").disabled = false;
+    msg.textContent = "";
+
     loop();
+
   } catch (e) {
     console.error(e);
+
+    running = false;
     stopMic();
-    msg.textContent = MIC_ERRORS[e.name] || `無法開始：${e.message || e.name}`;
+
+    $("start").disabled = false;
+    $("stop").disabled = true;
+
+    msg.textContent =
+      MIC_ERRORS[e.name] ||
+      `無法開始：${e.message || e.name}`;
   }
 };
+
+
 window.addEventListener("error", (e) => { $("msg").textContent = `程式錯誤：${e.message}`; });
 window.addEventListener("unhandledrejection", (e) => { $("msg").textContent = `程式錯誤：${e.reason?.message || e.reason}`; });
 $("stop").onclick = () => finish();
