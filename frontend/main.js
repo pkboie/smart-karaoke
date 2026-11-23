@@ -266,8 +266,6 @@ function processAudioFrame(audioFrame) {
   });
 
   // Real-time note judging
-  const tol = Number($("difficulty").value);
-
   const idx = song.notes.findIndex(
     (n) => t >= n.start && t < n.end
   );
@@ -278,7 +276,7 @@ function processAudioFrame(audioFrame) {
     if (
       Math.abs(
         foldCents(midi - song.notes[idx].midi)
-      ) < tol
+      ) < pitchTolerance
     ) {
       noteStats[idx].hit++;
     }
@@ -373,6 +371,10 @@ $("start").onclick = async () => {
         "無法使用麥克風，請透過 http://localhost:8000 開啟。"
       );
     }
+
+    pitchTolerance = Number($("difficulty").querySelector("input:checked").value);
+    $("song").disabled = true;
+    $("difficulty").disabled = true;
 
     // Step 1: Start microphone
     msg.textContent = "正在要求麥克風權限…";
