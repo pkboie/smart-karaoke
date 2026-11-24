@@ -242,7 +242,10 @@ def main():
     target_col = resolve_target_column(df, args.target)
 
     valid_groups = {"pitch", "rhythm", "contour", "expression"} - set(args.drop_group)
-    feature_cols = [c for c in df.columns if c.split(".")[0] in valid_groups]
+    feature_cols = [
+        c for c in df.columns
+        if "." in c and c.split(".", 1)[0] in valid_groups
+    ]
 
     drop_suffix = f"_drop_{'_'.join(args.drop_group)}" if args.drop_group else ""
     tag = f"{args.target}{drop_suffix}"
