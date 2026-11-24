@@ -17,8 +17,9 @@
 - [x] 改寫 `scoring/scorer.py`（支援自動偵測並載入 `overall`、`pitch`、`rhythm`、`expression` 模型，無模型時自動退回規則式）
 - [x] 合併 132 筆 features 與 labels，跑初步四目標 LOSO
 - [x] 修正訓練欄位篩選，排除評分標籤造成的特徵洩漏
+- [x] 以修正後流程重跑 Overall 四組 feature ablation
 - [x] 無模型的規則式降級通過 `tests/simulate_singing.py`
-- [ ] 用修正後特徵檢查 E4／ablation，確認 demo 模型分數行為，再發 PR
+- [ ] 確認 demo 模型分數行為，再發 PR
 
 ## 已完成
 
@@ -29,11 +30,12 @@
 - 2026-11-21：完成 `scoring/scorer.py` 升級（W3 修改 E），後端現已支援依 `models/<target>.joblib` 切換各面向模型給分。
 - 2026-11-24：將 `data/features/features.csv` 與 `labels.csv` 以 `song`、`singer_id` 一對一合併，共 132 筆；首次訓練發現 `pitch`、`rhythm` 等標籤欄位混入特徵，造成先前 E4 結果虛高並讓模型推論時缺欄位。
 - 2026-11-24：修正 `train.py` 僅選取 `pitch.*`、`rhythm.*`、`contour.*`、`expression.*` 欄位；重跑後 Overall Ridge LOSO Spearman $\rho=0.372$、MAE $=1.686$。此為初步結果，顯示目前特徵預測力有限，不應沿用先前有洩漏的成績。
+- 2026-11-24：依修正後流程重跑 Overall ablation；Ridge $\rho$ 分別為完整特徵 $0.372$、去 pitch $0.364$、去 rhythm $0.375$、去 contour $0.174$、去 expression $0.366$。信賴區間較寬，暫不作強結論；有效 CSV 與圖表已更新至 `experiments/results/`。
 - 2026-11-24：規則式降級下 `tests/simulate_singing.py` 通過；載入正式模型時雖不再崩潰，但合成 demo 歌的分數排序不符合預期，模型暫不適合 demo。
 
 ## 卡住／需要別人
 
-- **需要 #5 協助確認特徵品質**：抽查 132 筆的特徵是否合理，尤其確認 Acapella 音檔與參考旋律的移調、起點對齊；目前 LOSO 成績遠低於有洩漏時的結果。另請維持 `song`、`singer_id` 主鍵及帶群組前綴的特徵欄位。
+- **需要 #5 協助確認特徵品質**：抽查 132 筆的特徵是否合理，尤其確認 Acapella 音檔與參考旋律的移調、起點對齊；目前 LOSO 成績偏弱。另請維持 `song`、`singer_id` 主鍵及帶群組前綴的特徵欄位。
 - **需要 #4 知會整合狀態**：修正後模型目前未通過合成 demo 的分數行為檢查；整合前請先保留規則式 fallback，不要把這批模型當成 demo 已驗收版本。
 - **等待全組自錄資料（預計 12/01–12/04）**：自錄 trace 收齊後，會依據各條件測試結果微調 `scorer.py` 中 `make_tips()` 的文字建議門檻與內容。
 
