@@ -105,3 +105,183 @@ def notes_to_curve(notes, duration, hop=HOP_SEC):
         b = int(round(note["end"] / hop))
         curve[a:b] = note["midi"]
     return curve
+
+
+def segment_notes_v2(
+    times,
+    midi,
+    min_dur=0.12,
+    max_missing_sec=0.20,
+    max_pitch_diff=1.0,
+    smooth_frames=11,
+):
+    """
+    Improved note segmentation for singing vocals.
+
+    Improvements:
+    1. Fill short missing-pitch gaps when neighboring pitches agree.
+    2. Smooth pitch fluctuations before quantization.
+    3. Suppress very short pitch jumps.
+    4. Preserve longer rests and meaningful pitch changes.
+
+    Returns notes compatible with song.json v1.
+    """
+    from scipy.ndimage import median_filter
+
+    times = np.asarray(times, dtype=float)
+    m = np.asarray(midi, dtype=float).copy()
+
+    if len(times) != len(m):
+        raise ValueError("times and midi must have the same length")
+
+    if len(m) == 0:
+        return []
+
+    if len(times) > 1 and np.any(np.diff(times) <= 0):
+        raise ValueError("times must be strictly increasing")
+
+    if smooth_frames < 1:
+        raise ValueError("smooth_frames must be >= 1")
+
+    if max_missing_sec < 0 or max_pitch_diff < 0:
+        raise ValueError("Gap and pitch thresholds must be nonnegative")
+
+    # ------------------------------------------
+    # 1. Fill short missing-pitch gaps
+    # ------------------------------------------
+    valid = np.isfinite(m)
+    valid_indices = np.flatnonzero(valid)
+
+    if len(valid_indices) == 0:
+        return []
+
+    for left, right in zip(
+        valid_indices[:-1],
+        valid_indices[1:],
+    ):
+        if right == left + 1:
+            continue
+
+        missing_duration = (
+            times[right] - times[left] - HOP_SEC
+        )
+
+        pitch_difference = abs(m[right] - m[left])
+
+        if (
+            missing_duration <= max_missing_sec
+            and pitch_difference <= max_pitch_diff
+        ):
+            m[left + 1:right] = np.linspace(
+                m[left],
+                m[right],
+                right - left + 1,
+            )[1:-1]
+
+    # ------------------------------------------
+    # 2. Median smoothing within voiced regions
+    #    Keep long silent gaps as NaN.
+    # ------------------------------------------
+    valid = np.isfinite(m)
+    smoothed = np.full_like(m, np.nan)
+
+    boundaries = np.diff(
+        np.r_[False, valid, False].astype(int)
+    )
+
+    starts = np.flatnonzero(boundaries == 1)
+    ends = np.flatnonzero(boundaries == -1)
+
+    for start, end in zip(starts, ends):
+        region = m[start:end]
+
+        if len(region) < 3:
+            smoothed[start:end] = region
+            continue
+
+        size = min(smooth_frames, len(region))
+        if size % 2 == 0:
+            size -= 1
+
+        smoothed[start:end] = median_filter(
+            region,
+            size=size,
+            mode="nearest",
+        )
+
+    # ------------------------------------------
+    # 3. Convert frame pitches into notes
+    # ------------------------------------------
+    quantized = np.where(
+        np.isfinite(smoothed),
+        np.round(smoothed),
+        np.nan,
+    )
+
+    notes = []
+    current = None
+
+    for t, pitch in zip(times, quantized):
+        if not np.isfinite(pitch):
+            if current is not None:
+                notes.append(current)
+                current = None
+            continue
+
+        pitch = int(pitch)
+
+        if current is not None and pitch == current["midi"]:
+            current["end"] = float(t + HOP_SEC)
+        else:
+            if current is not None:
+                notes.append(current)
+
+            current = {
+                "start": float(t),
+                "end": float(t + HOP_SEC),
+                "midi": pitch,
+            }
+
+    if current is not None:
+        notes.append(current)
+
+    # ------------------------------------------
+    # 4. Merge compatible short-gap fragments
+    # ------------------------------------------
+    merged = []
+
+    for note in notes:
+        if not merged:
+            merged.append(note.copy())
+            continue
+
+        prev = merged[-1]
+        gap = note["start"] - prev["end"]
+
+        if (
+            0 <= gap <= 0.08
+            and note["midi"] == prev["midi"]
+        ):
+            prev["end"] = note["end"]
+        else:
+            merged.append(note.copy())
+
+    # ------------------------------------------
+    # 5. Remove tiny fragments
+    # ------------------------------------------
+    result = []
+
+    for note in merged:
+        duration = note["end"] - note["start"]
+
+        if duration < min_dur:
+            continue
+
+        result.append({
+            "start": round(note["start"], 3),
+            "end": round(note["end"], 3),
+            "midi": note["midi"],
+            "lyric": "",
+        })
+
+    return result
