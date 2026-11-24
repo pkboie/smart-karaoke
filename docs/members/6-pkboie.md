@@ -1,11 +1,11 @@
 # #6 pkboie：即時判分、音高準確度
 
-> 最後更新：2026-11-23（pitchy 加入、100 段 SNR）
+> 最後更新：2026-11-25（E1 圖、配對比較）
 
 ## 目前在做
 
-- branch：`pitch/pitchy-node`（準備開 PR）
-- 內容：用 Node 跑前端的 pitchy，加入 E1 比較；MIR-1K 100 段 × 6 種 SNR 跑完
+- branch：`pitch/e1-plots`（準備開 PR）
+- 內容：E1 折線圖（rpa、voicing_fa 對 SNR，含 95% CI）；用配對比較修正 YIN vs. pYIN 的結論
 
 ## 本週目標（對照 PROJECT_PLAN.md）
 
@@ -16,6 +16,7 @@
 - [x] 開 PR 合併修改 A（PR #6，11/23）
 - [x] pitchy Node 腳本，E1 有 3 種方法（YIN、pYIN、pitchy）
 - [x] MIR-1K 100 段 + 各 SNR 的完整數字
+- [x] E1 的圖
 
 ## 已完成
 
@@ -30,6 +31,9 @@
   - `experiments/pitchy_f0.mjs`：Node 跑 `frontend/vendor/pitchy.js`，判斷條件和 `main.js` 完全一致（2048 樣本、clarity > 0.85、RMS > 0.01、60–1100 Hz）
   - `pitch_benchmark.py --methods pitchy`：先重新取樣到 48 kHz（瀏覽器麥克風的取樣率，2048 樣本 ≈ 43 ms，與 demo 一致）
   - MIR-1K 100 段 × 3 方法 × 6 種 SNR：`experiments/results/e1_mir1k_100_snr.csv`
+- 2026-11-25：**E1 圖**
+  - `experiments/plot_e1.py` → `experiments/results/e1_snr.png`；`summarize()` 算每個 (方法, SNR) 的平均與 95% CI（NaN 不算進 n）
+  - `tests/check_plot_summary.py`：手算小資料檢查 `summarize()`，通過
 
 ## E1 結果（MIR-1K 隨機 100 段，seed 0）
 
@@ -41,12 +45,18 @@
 | pYIN | 0.967 ± 0.005 | 0.968 | 0.994 | 0.314 | 11.7 |
 | pitchy | 0.937 ± 0.011 | 0.942 | 0.943 | **0.036** | **7.7** |
 
-- YIN 和 pYIN 的 rpa 差距小於信賴區間，**統計上分不出高下**；pitchy 明顯較低
+- YIN vs. pYIN：兩個 CI 重疊，但兩者跑的是**同樣 100 段**，應該用**配對比較**（同一段相減再算 CI；兩者逐段相關 0.92，段落難度的晃動會抵消）：
+  pYIN − YIN = **+0.0025 ± 0.0023**（95% CI 不含 0；39 段較好、26 段較差、35 段平手）→ pYIN **統計上略好，但只差 0.25 個百分點，實務上可忽略**
+- pitchy 明顯較低
 - pitchy 的損失幾乎全是**漏聽**（rpa ≈ recall），聽到時誤差最小、誤報率比 pYIN 低近 10 倍 → 支持前端選用 pitchy
 - **YIN 的 recall = 1.000 不代表它好**：我們 `detect_pitch()` 裡 YIN 的有聲判斷是「音量 > 最大音量 2%」（`scoring/pitch_utils.py:42`），幾乎全判有聲。報告要註明
 - pitchy 的耗時（約 23 ms／秒）含重新取樣與啟動 Node，**不是演算法速度**，不要拿來和 YIN／pYIN 比
 
 ### 混入伴奏（rpa / voicing_fa）
+
+![E1：rpa 與 voicing_fa 隨 SNR 的變化](../../experiments/results/e1_snr.png)
+
+（`python experiments/plot_e1.py` 重畫；陰影 = 95% CI）
 
 | SNR (dB) | YIN | pYIN | pitchy |
 | --- | --- | --- | --- |
@@ -59,7 +69,8 @@
 
 三種方法壞掉的方式不同：
 - **YIN**：把伴奏當人聲（10 dB 時 fa 0.995），八度錯誤大增
-- **pYIN**：rpa 最穩，但誤報升到一半
+- **pYIN**：rpa 最穩，但誤報升到一半。10 dB 配對比較 pYIN − YIN = **+0.083 ± 0.014**（93 段較好、7 段較差）→ 有伴奏時明顯比 YIN 穩
+- **0 dB 以下 YIN 的 rpa 反超 pYIN 是假象**：YIN 每格都判有聲（recall 1.000），不會因漏判失分；看「聽到的格子答對幾成」（rpa ÷ recall），0 dB 時 YIN 0.30、pYIN 0.37、pitchy 0.49
 - **pitchy**：伴奏讓 clarity 掉到門檻 0.85 以下 → 整格丟掉，**漏聽而不亂猜**（10 dB 時聽到的格子仍有 9 成正確）
 - → 「一定要戴耳機」的量化依據：伴奏漏到 10 dB，pitchy 漏掉約 28% 的演唱
 - `mean_abs_cents` 在 ≤ 5 dB 時接近隨機（約 200 cent），只看到 10 dB 即可
@@ -98,11 +109,10 @@ python tests/check_pitch_metrics.py                                    # 檢查�
 
 - **#1**：**E3 的 MIR-1K 部分已經跑完**（上表，`e1_mir1k_100_snr.csv`），可以直接用。建議你專心做自錄的耳機 vs. 喇叭對照，以及自適應 VAD 能不能拉高 pitchy 的 recall（漏聽主因是固定門檻）
 - **#2**：CSV 已有 `ms_per_sec` 欄位可當 E2 起點。注意第一段有暖機成本（YIN 38 ms，之後 2–3 ms），請取中位數或丟掉第一次
-- **#4**：你的 `codex/difficulty-ui` 改到了 `main.js` 的逐音符判分。我要改 `sample()`（忽略音符開頭 80 ms、改用中位數判定），想等你那支 merge 後再開 `pitch/note-judging`，避免衝突
+- **#4**：`codex/difficulty-ui`（PR #11）已 merge，之後我會從新的 master 開 `pitch/note-judging` 改 `processAudioFrame()`（忽略音符開頭 80 ms、改用中位數判定），動到 `main.js` 前會先跟你說
 
 ## 接下來
 
-- E1 的圖（rpa 和 voicing_fa 隨 SNR 變化的折線圖）
 - CREPE-tiny（確認 torch 是否支援 Python 3.14），E1 的第 4 種方法
 - 等 #1 PR #5、#4 difficulty-ui merge 後改進逐音符判分（屆時函式名是 `processAudioFrame()`）
 - E1 完整結果與圖（12/04）
