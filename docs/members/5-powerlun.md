@@ -1,28 +1,34 @@
+
 # #5：離線處理與特徵工程（Offline Pipeline & Feature Engineering）
 
-> 最後更新：2026-11-23
+> 最後更新：2026-11-27  
+> 負責人：powerlun
 
 ## 目前在做
 
-- branch：`master`（song6 Demo 已透過 `feature/song6-demo` 合併）
-- 內容：
-  - 完善正式歌曲的 `song.json` 與歌詞時間對齊。
-  - 改善自動音符切分與參考音高品質。
-  - 驗證 Acapella 特徵數值及代理參考旋律造成的偏差。
+- Branch：`feature/w2-offline-features-v2`
+- 目前重點：
+  - 完成 W2 新版 Features 的 GitHub 提交及與 #3 的交接。
+  - 協助 #3 比較新版與舊版 Features 的模型表現。
+  - 持續改善正式 Demo 的參考音高與歌詞時間對齊。
   - 準備第二首正式 Demo 歌曲。
 
 ## 本週目標（對照 PROJECT_PLAN.md）
 
-- [x] 完成 DTW 移調估計與初步測試。
+- [x] 完成 DTW 對齊與移調估計的初步實作。
 - [x] 支援直接從 Arrow 資料集讀取音訊。
 - [x] 完成六首歌曲、132 筆特徵提取。
-- [x] 確認 Features 與 #3 的 `labels.csv` 可正確合併。
-- [x] 將 `features.csv` 整合至 GitHub master。
-- [x] 完成第一首正式 Demo 歌曲 song6 的基本處理與前端測試。
-- [x] 提交 song6 的 `song.json`、人聲、伴奏及歌詞對齊工具（PR #12）。
-- [ ] 完成 song6 的歌詞時間校正與參考音高校正。
+- [x] 確認 Features 與 Labels 可以使用 `(song, singer_id)` 合併。
+- [x] 完成第一版 `features.csv` 並整合至 master。
+- [x] 完成第一首正式 Demo song6 的基本處理與前端測試。
+- [x] 透過 PR #12 提交正式 song6 Demo 資料及歌詞對齊工具。
+- [x] 改善全域時間對齊、移調估計與音符切分。
+- [x] 產生新版 `features_v2.csv`，共 132 筆資料。
+- [x] 完成新版 Features 的基本資料品質檢查。
+- [x] 將 Acapella song6 參考旋律與正式 Karaoke Demo 分離。
+- [ ] 完成新版 Features 的模型效果驗證（與 #3 合作）。
+- [ ] 完成正式 song6 的完整歌詞與參考音高校正。
 - [ ] 完成第二首正式 Demo 歌曲。
-- [ ] 驗證特徵品質與代理參考旋律造成的偏差。
 
 ## 已完成
 
@@ -32,8 +38,13 @@
 - 修改 `scoring/extract_dataset.py`，支援直接讀取 Hugging Face Arrow 音訊。
 - 新增 `offline/build_arrow_references.py`，建立測試用代理參考旋律。
 - 成功處理 `song1`～`song6`，每首 22 位歌手，共 132 筆錄音。
-- 產生 10 個特徵，涵蓋 `pitch.*`、`rhythm.*`、`contour.*`、`expression.*`。
-- 使用 `song`、`singer_id` 合併 Features 與 Labels，132 筆全部配對成功，無缺失值。
+- 產生 10 個數值特徵，涵蓋：
+  - Pitch：音高誤差與音高命中率。
+  - Rhythm：起音時間誤差、提前與延後比例。
+  - Contour：旋律音程準確率、音符覆蓋率。
+  - Expression：顫音幅度、音量變化。
+- 使用 `(song, singer_id)` 合併 Features 與 Labels。
+- 132 筆資料全部配對成功，無缺失值。
 - 完成 Git Commits：`473fb36`、`29cd54a`。
 
 ### 2026-11-23：Official Song Demo
@@ -42,43 +53,127 @@
 - 使用 Demucs 分離人聲與伴奏。
 - 使用 pYIN 偵測原唱音高，產生參考音符與 `song.json`。
 - 使用 Faster-Whisper 嘗試自動辨識中文歌詞與時間戳記。
-- 新增 `offline/align_lyrics.py`，根據歌詞時間表將歌詞分配到參考音符。
+- 新增 `offline/align_lyrics.py`，根據歌詞時間表分配歌詞至參考音符。
 - 前 35 秒已完成五段歌詞的初步時間對齊。
 - 已於 localhost 測試歌曲選單、伴奏播放、音高線及歌詞顯示。
-- song6 的 `song.json`、`vocals.wav`、`accompaniment.wav`、`lyrics_timing.json` 及 `align_lyrics.py` 已透過 PR #12 合併至 master（`0fb03a1`）。
+- 正式 song6 的相關資料已透過 PR #12 合併至 master（`0fb03a1`）。
 - 已使用乾淨 Git Worktree 確認必要檔案存在。
+
+### 2026-11-27：W2 Feature Engineering Improvements
+
+#### 1. 問題分析
+
+針對第一版 Features 進行品質檢查，發現：
+
+- 使用 Singer 0 作為代理參考旋律，會產生自我參考偏差。
+- 同一首歌曲的不同歌手，錄音長度與起唱時間可能差異很大。
+- 原本的全域時間對齊搜尋範圍不足。
+- 初版移調估計容易出現搜尋邊界值，例如 `key_shift = -6`。
+- 自動音高切分可能受到靜音、短暫音高跳動與 pYIN 誤判影響。
+
+#### 2. 演算法改善
+
+修改 `scoring/features.py`：
+
+- 改善全域時間偏移估計，支援較大幅度的起唱時間差異。
+- 結合 voiced activity 與音高相似度尋找候選對齊位置。
+- 使用 DTW 比較參考旋律與演唱音高。
+- 調整移調估計方式，降低不同移調候選使用不同配對路徑造成的干擾。
+- 保留原本的 10 個 ML 特徵。
+- 額外輸出 `offset_sec` 與 `key_shift` 作為診斷資訊。
+
+修改 `scoring/pitch_utils.py`：
+
+- 改善 `segment_notes()` 的音高平滑。
+- 避免將無聲影格的 `NaN` 當成 MIDI 0 參與平滑。
+- 保留既有音高偵測與音符切分介面。
+
+#### 3. Acapella song6 參考旋律
+
+因為 `data/songs/song6/song.json` 已用於正式 Karaoke Demo，因此另外建立：
+
+`data/songs/acapella_song6/song.json`
+
+- 使用 Acapella song6 的 Singer 0 音訊建立代理參考。
+- 音訊長度約 76.743 秒。
+- 偵測並切分出 154 個參考音符。
+- 不覆蓋正式 Demo 的歌曲資訊、歌詞與伴奏。
+
+#### 4. 新版 Features
+
+產生：
+
+`data/features/features_v2.csv`
+
+資料規格：
+
+- 六首歌曲：`song1`～`song6`。
+- 每首 22 位歌手，共 132 筆。
+- 使用 `(song, singer_id)` 作為合併主鍵。
+- 保留原本的 10 個數值特徵。
+- 增加 `offset_sec` 與 `key_shift` 診斷欄位。
+- 無重複主鍵、NaN 或 Inf。
+- 保留原本的 `features.csv` 作為 baseline。
+
+#### 5. 新舊 Features 比較
+
+六首歌曲共 132 筆資料的平均結果：
+
+| 指標 | 舊版 | 新版 |
+|---|---:|---:|
+| Pitch Median Absolute Error | 234.4 cents | 219.5 cents |
+| Pitch Hit Rate (±100 cents) | 31.4% | 37.6% |
+| Rhythm Median Absolute Onset Error | 709.1 ms | 393.6 ms |
+| Note Coverage | 93.0% | 94.1% |
+
+整體而言，新版在多項特徵統計上有所改善，尤其是節奏起音誤差。
+
+但這些是演算法輸出的數值變化，**尚不能證明真實評分準確率提高**，仍需 #3 使用一致的模型訓練及評估方式進行比較。
+
+新版的移調估計偏保守，132 筆資料中有 127 筆 `key_shift = 0`，因此目前不將該欄位視為已驗證的可靠移調標籤。
 
 ## 卡住／需要別人
 
-- 歌唱人聲的 Whisper 辨識仍有漏字、錯字及時間錯位問題，暫時使用人工標記歌詞區間。
-- pYIN 自動切分音符可能受到滑音、顫音與殘留伴奏影響，需要進一步校正。
-- 需要進行正式參考旋律與特徵品質驗證。
-- 需要與 #3 確認訓練特徵品質及後續 E6 ablation 評估。
-- song6 已交付 master，等待其他組員進行跨環境整合測試。
+- 需要 #3 協助比較 `features.csv` 與 `features_v2.csv` 在相同模型設定下的訓練與測試結果。
+- 目前仍使用 Singer 0 作為代理參考旋律，可能造成自我參考偏差。
+- 時間對齊與移調估計尚未使用人工標註的標準答案進行驗證。
+- 歌唱人聲的 Whisper 辨識仍有漏字、錯字與時間錯位問題。
+- 正式 song6 Demo 的 pYIN 音符與歌詞時間仍需要進一步人工校正。
+- 正式 Demo 仍需要其他組員協助進行跨環境整合測試。
 
 ## 筆記
 
-### 1. Feature Extraction
+### 1. Feature Extraction Pipeline
 
 主要流程：
 
-`Arrow audio → pYIN → MIDI pitch → DTW → Feature Extraction → CSV`
+`Arrow Audio → pYIN → MIDI Pitch → Global Time Alignment → DTW → Feature Extraction → CSV`
 
 相關檔案：
 
 - `scoring/features.py`
+- `scoring/pitch_utils.py`
 - `scoring/extract_dataset.py`
 - `offline/build_arrow_references.py`
 
 ### 2. 特徵資料格式
 
-輸出位置：`data/features/features.csv`
+第一版：
 
-- 132 筆資料
-- 2 個識別欄位：`song`、`singer_id`
-- 10 個數值特徵
+`data/features/features.csv`
 
-與 #3 的 `labels.csv` 使用以下欄位合併：
+第二版：
+
+`data/features/features_v2.csv`
+
+第二版包含：
+
+- 132 筆資料。
+- 2 個識別欄位：`song`、`singer_id`。
+- 10 個 ML 數值特徵。
+- 2 個診斷欄位：`offset_sec`、`key_shift`。
+
+與 #3 的 `labels.csv` 合併：
 
 ```python
 merged = features.merge(
@@ -88,43 +183,46 @@ merged = features.merge(
 )
 ```
 
+訓練時建議先沿用原本 10 個特徵，暫時不要直接把 `offset_sec`、`key_shift` 加入訓練，以便公平比較新舊版本。
+
 Expression 訓練目標：
 
 `expression = (vibrato + dynamic) / 2`
 
 ### 3. 正式歌曲處理
 
+正式 Demo：
+
+`data/songs/song6/`
+
 處理流程：
 
 `Original Audio → Demucs → Vocals / Accompaniment → pYIN → song.json`
 
-歌詞處理流程：
+歌詞處理：
 
 `Lyrics + Timing → align_lyrics.py → song.json`
 
-正式 Demo 資料位置：
-
-`data/songs/song6/`
-
-主要檔案：
-
-- `song.json`：歌曲資訊、參考音符與歌詞
-- `vocals.wav`：分離後的人聲
-- `accompaniment.wav`：分離後的伴奏
-- `lyrics_timing.json`：歌詞時間設定
-
-執行歌詞對齊：
+執行：
 
 ```bash
 python offline/align_lyrics.py
 ```
 
-目前歌曲約 205 秒，前 35 秒已加入初步對齊歌詞，剩餘段落尚未完成。
+目前正式 song6 約 205 秒，前 35 秒已加入初步對齊歌詞，其餘段落尚未完成。
 
-### 4. 已知限制
+### 4. Acapella 與正式 Demo 的區別
 
-- 目前使用代理參考旋律產生的 132 筆 Features，適合測試 ML 訓練流程，但尚未完成特徵品質驗證。
-- `singer_id=0` 作為代理參考可能造成特徵偏差。
-- song6 的正式參考音高由 pYIN 自動產生，尚未完成全面人工校正。
-- `align_lyrics.py` 目前依照提供的時間範圍分配歌詞，並非真正的音訊強制對齊，因此歌詞可能提前、延後或顯示過快。
-- 後續目標是建立可重複使用的歌詞自動對齊流程，減少人工標記秒數的工作。
+- `data/songs/song6/song.json`：正式 Karaoke Demo。
+- `data/songs/acapella_song6/song.json`：ML 資料集專用代理參考。
+
+兩者來源及用途不同，不能混用。
+
+### 5. 已知限制與後續方向
+
+- 代理參考旋律可能造成 Singer 0 的自我參考偏差。
+- 不同歌手可能演唱不同長度的片段，部分時間對齊結果仍可能不可靠。
+- 目前移調估計偏保守，尚未確認能穩定辨識真正的升降 Key。
+- 使用評分標籤挑選高分參考歌手可能造成標籤洩漏，因此尚未採用於正式 Features。
+- 下一步由 #3 進行新舊 Features 模型比較，並視結果決定是否採用新版。
+- 持續改善正式 Demo 的參考音高、歌詞時間對齊及第二首歌曲處理。
