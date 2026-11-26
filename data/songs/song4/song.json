@@ -1,0 +1,1226 @@
+{
+ "title": "song4",
+ "bpm": null,
+ "duration": 95.527,
+ "accompaniment": null,
+ "notes": [
+  {
+   "start": 3.88,
+   "end": 4.01,
+   "midi": 57,
+   "lyric": ""
+  },
+  {
+   "start": 4.1,
+   "end": 4.41,
+   "midi": 57,
+   "lyric": ""
+  },
+  {
+   "start": 4.5,
+   "end": 5.43,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 6.14,
+   "end": 6.34,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 6.38,
+   "end": 6.65,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 6.65,
+   "end": 6.83,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 6.89,
+   "end": 7.12,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 7.22,
+   "end": 8.01,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 8.42,
+   "end": 8.61,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 8.84,
+   "end": 9.0,
+   "midi": 47,
+   "lyric": ""
+  },
+  {
+   "start": 9.0,
+   "end": 9.53,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 9.57,
+   "end": 9.92,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 10.68,
+   "end": 10.88,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 10.91,
+   "end": 11.14,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 11.36,
+   "end": 11.68,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 11.71,
+   "end": 11.91,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 12.1,
+   "end": 12.59,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 12.76,
+   "end": 13.11,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 13.3,
+   "end": 13.43,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 13.43,
+   "end": 13.68,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 13.81,
+   "end": 14.0,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 14.32,
+   "end": 14.56,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 14.63,
+   "end": 14.83,
+   "midi": 50,
+   "lyric": ""
+  },
+  {
+   "start": 14.83,
+   "end": 14.98,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 15.44,
+   "end": 16.93,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 19.24,
+   "end": 19.36,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 19.42,
+   "end": 19.52,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 19.81,
+   "end": 20.11,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 20.15,
+   "end": 20.3,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 20.42,
+   "end": 20.65,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 20.65,
+   "end": 20.8,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 21.02,
+   "end": 21.16,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 21.16,
+   "end": 21.29,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 21.35,
+   "end": 21.59,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 22.3,
+   "end": 22.47,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 22.64,
+   "end": 22.83,
+   "midi": 61,
+   "lyric": ""
+  },
+  {
+   "start": 22.9,
+   "end": 23.04,
+   "midi": 63,
+   "lyric": ""
+  },
+  {
+   "start": 23.15,
+   "end": 23.28,
+   "midi": 61,
+   "lyric": ""
+  },
+  {
+   "start": 23.28,
+   "end": 23.44,
+   "midi": 62,
+   "lyric": ""
+  },
+  {
+   "start": 23.7,
+   "end": 23.93,
+   "midi": 57,
+   "lyric": ""
+  },
+  {
+   "start": 24.41,
+   "end": 24.7,
+   "midi": 50,
+   "lyric": ""
+  },
+  {
+   "start": 24.7,
+   "end": 24.82,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 24.82,
+   "end": 24.94,
+   "midi": 50,
+   "lyric": ""
+  },
+  {
+   "start": 24.94,
+   "end": 25.35,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 26.32,
+   "end": 26.54,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 26.56,
+   "end": 26.83,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 26.83,
+   "end": 27.18,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 27.29,
+   "end": 27.49,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 27.76,
+   "end": 28.2,
+   "midi": 49,
+   "lyric": ""
+  },
+  {
+   "start": 28.34,
+   "end": 28.69,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 28.7,
+   "end": 28.82,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 28.82,
+   "end": 29.01,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 29.25,
+   "end": 29.66,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 29.73,
+   "end": 29.84,
+   "midi": 50,
+   "lyric": ""
+  },
+  {
+   "start": 29.84,
+   "end": 30.36,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 30.36,
+   "end": 30.56,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 30.56,
+   "end": 30.99,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 31.12,
+   "end": 31.28,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 31.28,
+   "end": 32.24,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 34.37,
+   "end": 34.82,
+   "midi": 57,
+   "lyric": ""
+  },
+  {
+   "start": 34.82,
+   "end": 35.13,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 35.13,
+   "end": 35.42,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 35.42,
+   "end": 35.53,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 36.52,
+   "end": 36.69,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 37.03,
+   "end": 37.26,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 37.26,
+   "end": 37.37,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 37.55,
+   "end": 37.79,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 37.89,
+   "end": 38.65,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 38.79,
+   "end": 38.93,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 38.93,
+   "end": 39.2,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 39.33,
+   "end": 39.45,
+   "midi": 46,
+   "lyric": ""
+  },
+  {
+   "start": 39.54,
+   "end": 39.74,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 39.82,
+   "end": 40.33,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 40.33,
+   "end": 40.43,
+   "midi": 49,
+   "lyric": ""
+  },
+  {
+   "start": 41.59,
+   "end": 41.76,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 41.76,
+   "end": 41.91,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 41.91,
+   "end": 42.05,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 42.25,
+   "end": 42.37,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 42.71,
+   "end": 43.09,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 43.27,
+   "end": 43.38,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 43.4,
+   "end": 43.56,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 44.09,
+   "end": 44.23,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 44.45,
+   "end": 44.76,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 44.82,
+   "end": 44.97,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 45.01,
+   "end": 45.38,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 45.46,
+   "end": 45.59,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 45.83,
+   "end": 45.96,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 46.09,
+   "end": 46.22,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 46.29,
+   "end": 47.3,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 49.94,
+   "end": 50.23,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 50.37,
+   "end": 50.71,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 50.79,
+   "end": 50.95,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 50.98,
+   "end": 51.12,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 51.19,
+   "end": 51.46,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 51.46,
+   "end": 51.57,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 51.79,
+   "end": 52.29,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 52.92,
+   "end": 53.03,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 53.17,
+   "end": 53.28,
+   "midi": 59,
+   "lyric": ""
+  },
+  {
+   "start": 53.48,
+   "end": 54.0,
+   "midi": 64,
+   "lyric": ""
+  },
+  {
+   "start": 54.14,
+   "end": 54.53,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 54.6,
+   "end": 54.84,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 54.91,
+   "end": 55.05,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 55.05,
+   "end": 55.29,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 55.41,
+   "end": 55.53,
+   "midi": 50,
+   "lyric": ""
+  },
+  {
+   "start": 55.53,
+   "end": 56.1,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 56.66,
+   "end": 56.84,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 57.16,
+   "end": 57.28,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 57.28,
+   "end": 57.41,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 57.41,
+   "end": 57.52,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 57.63,
+   "end": 57.75,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 57.91,
+   "end": 58.07,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 58.14,
+   "end": 58.67,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 58.84,
+   "end": 58.98,
+   "midi": 57,
+   "lyric": ""
+  },
+  {
+   "start": 58.98,
+   "end": 59.19,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 59.28,
+   "end": 59.87,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 60.23,
+   "end": 60.34,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 60.5,
+   "end": 60.9,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 60.9,
+   "end": 61.06,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 61.06,
+   "end": 61.17,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 61.42,
+   "end": 61.56,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 61.56,
+   "end": 61.82,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 61.82,
+   "end": 61.95,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 62.01,
+   "end": 62.67,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 64.14,
+   "end": 64.25,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 64.31,
+   "end": 64.52,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 64.67,
+   "end": 65.05,
+   "midi": 63,
+   "lyric": ""
+  },
+  {
+   "start": 65.19,
+   "end": 65.36,
+   "midi": 63,
+   "lyric": ""
+  },
+  {
+   "start": 65.36,
+   "end": 65.5,
+   "midi": 62,
+   "lyric": ""
+  },
+  {
+   "start": 65.5,
+   "end": 65.65,
+   "midi": 61,
+   "lyric": ""
+  },
+  {
+   "start": 65.8,
+   "end": 65.9,
+   "midi": 61,
+   "lyric": ""
+  },
+  {
+   "start": 65.92,
+   "end": 66.09,
+   "midi": 59,
+   "lyric": ""
+  },
+  {
+   "start": 66.09,
+   "end": 66.37,
+   "midi": 60,
+   "lyric": ""
+  },
+  {
+   "start": 66.51,
+   "end": 66.63,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 66.72,
+   "end": 66.86,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 67.22,
+   "end": 67.35,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 67.35,
+   "end": 67.56,
+   "midi": 57,
+   "lyric": ""
+  },
+  {
+   "start": 67.72,
+   "end": 67.94,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 67.94,
+   "end": 68.23,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 68.3,
+   "end": 68.46,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 68.64,
+   "end": 68.9,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 68.95,
+   "end": 69.15,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 69.19,
+   "end": 69.34,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 69.39,
+   "end": 69.71,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 69.84,
+   "end": 70.04,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 70.21,
+   "end": 70.56,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 70.69,
+   "end": 71.25,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 71.84,
+   "end": 72.12,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 72.35,
+   "end": 72.54,
+   "midi": 63,
+   "lyric": ""
+  },
+  {
+   "start": 72.54,
+   "end": 72.65,
+   "midi": 62,
+   "lyric": ""
+  },
+  {
+   "start": 72.7,
+   "end": 72.92,
+   "midi": 62,
+   "lyric": ""
+  },
+  {
+   "start": 73.11,
+   "end": 73.34,
+   "midi": 60,
+   "lyric": ""
+  },
+  {
+   "start": 73.44,
+   "end": 73.65,
+   "midi": 59,
+   "lyric": ""
+  },
+  {
+   "start": 73.75,
+   "end": 73.86,
+   "midi": 59,
+   "lyric": ""
+  },
+  {
+   "start": 74.12,
+   "end": 74.45,
+   "midi": 59,
+   "lyric": ""
+  },
+  {
+   "start": 74.62,
+   "end": 74.86,
+   "midi": 58,
+   "lyric": ""
+  },
+  {
+   "start": 74.92,
+   "end": 75.33,
+   "midi": 58,
+   "lyric": ""
+  },
+  {
+   "start": 75.54,
+   "end": 75.83,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 75.87,
+   "end": 76.14,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 76.14,
+   "end": 76.25,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 76.25,
+   "end": 76.55,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 76.61,
+   "end": 77.74,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 77.74,
+   "end": 78.03,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 79.67,
+   "end": 79.81,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 79.99,
+   "end": 80.28,
+   "midi": 63,
+   "lyric": ""
+  },
+  {
+   "start": 80.28,
+   "end": 80.44,
+   "midi": 62,
+   "lyric": ""
+  },
+  {
+   "start": 80.48,
+   "end": 80.77,
+   "midi": 62,
+   "lyric": ""
+  },
+  {
+   "start": 80.8,
+   "end": 81.02,
+   "midi": 62,
+   "lyric": ""
+  },
+  {
+   "start": 81.02,
+   "end": 81.14,
+   "midi": 61,
+   "lyric": ""
+  },
+  {
+   "start": 81.38,
+   "end": 81.72,
+   "midi": 60,
+   "lyric": ""
+  },
+  {
+   "start": 81.72,
+   "end": 81.9,
+   "midi": 59,
+   "lyric": ""
+  },
+  {
+   "start": 81.9,
+   "end": 82.16,
+   "midi": 60,
+   "lyric": ""
+  },
+  {
+   "start": 82.3,
+   "end": 82.45,
+   "midi": 57,
+   "lyric": ""
+  },
+  {
+   "start": 82.67,
+   "end": 82.88,
+   "midi": 50,
+   "lyric": ""
+  },
+  {
+   "start": 82.99,
+   "end": 83.23,
+   "midi": 49,
+   "lyric": ""
+  },
+  {
+   "start": 83.23,
+   "end": 83.33,
+   "midi": 50,
+   "lyric": ""
+  },
+  {
+   "start": 83.4,
+   "end": 83.54,
+   "midi": 50,
+   "lyric": ""
+  },
+  {
+   "start": 83.54,
+   "end": 83.75,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 83.75,
+   "end": 83.92,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 83.92,
+   "end": 84.17,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 84.23,
+   "end": 84.42,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 84.5,
+   "end": 84.76,
+   "midi": 55,
+   "lyric": ""
+  },
+  {
+   "start": 84.76,
+   "end": 84.86,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 84.9,
+   "end": 85.24,
+   "midi": 57,
+   "lyric": ""
+  },
+  {
+   "start": 85.71,
+   "end": 85.84,
+   "midi": 47,
+   "lyric": ""
+  },
+  {
+   "start": 85.84,
+   "end": 86.35,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 87.55,
+   "end": 87.91,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 87.99,
+   "end": 88.11,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 88.26,
+   "end": 88.41,
+   "midi": 52,
+   "lyric": ""
+  },
+  {
+   "start": 88.41,
+   "end": 88.56,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 88.65,
+   "end": 89.03,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 89.03,
+   "end": 89.27,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 89.46,
+   "end": 89.78,
+   "midi": 46,
+   "lyric": ""
+  },
+  {
+   "start": 89.78,
+   "end": 90.23,
+   "midi": 47,
+   "lyric": ""
+  },
+  {
+   "start": 90.23,
+   "end": 90.34,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 91.03,
+   "end": 91.17,
+   "midi": 48,
+   "lyric": ""
+  },
+  {
+   "start": 91.27,
+   "end": 91.49,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 91.51,
+   "end": 91.92,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 91.95,
+   "end": 92.18,
+   "midi": 51,
+   "lyric": ""
+  },
+  {
+   "start": 92.23,
+   "end": 92.58,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 92.71,
+   "end": 93.11,
+   "midi": 56,
+   "lyric": ""
+  },
+  {
+   "start": 93.27,
+   "end": 93.62,
+   "midi": 54,
+   "lyric": ""
+  },
+  {
+   "start": 93.62,
+   "end": 94.01,
+   "midi": 53,
+   "lyric": ""
+  },
+  {
+   "start": 94.04,
+   "end": 94.27,
+   "midi": 53,
+   "lyric": ""
+  }
+ ]
+}
