@@ -1,11 +1,11 @@
 # #6 pkboie：即時判分、音高準確度
 
-> 最後更新：2026-11-25（E1 圖、配對比較）
+> 最後更新：2026-11-27（CREPE-tiny 加入 E1）
 
 ## 目前在做
 
-- branch：`pitch/e1-plots`（準備開 PR）
-- 內容：E1 折線圖（rpa、voicing_fa 對 SNR，含 95% CI）；用配對比較修正 YIN vs. pYIN 的結論
+- branch：`pitch/e1-crepe`（準備開 PR）
+- 內容：CREPE-tiny 成為 E1 第 4 種方法；`plot_e1.py` 加上配對比較 `paired_diff()`
 
 ## 本週目標（對照 PROJECT_PLAN.md）
 
@@ -17,6 +17,7 @@
 - [x] pitchy Node 腳本，E1 有 3 種方法（YIN、pYIN、pitchy）
 - [x] MIR-1K 100 段 + 各 SNR 的完整數字
 - [x] E1 的圖
+- [x] CREPE-tiny 加入 E1
 
 ## 已完成
 
@@ -34,6 +35,9 @@
 - 2026-11-25：**E1 圖**
   - `experiments/plot_e1.py` → `experiments/results/e1_snr.png`；`summarize()` 算每個 (方法, SNR) 的平均與 95% CI（NaN 不算進 n）
   - `tests/check_plot_summary.py`：手算小資料檢查 `summarize()`，通過
+- 2026-11-27：**CREPE-tiny 加入 E1**
+  - 100 段 × 6 種 SNR：`experiments/results/e1_mir1k_100_snr_crepe.csv`（和 `e1_mir1k_100_snr.csv` 同一批段，`plot_e1.py` 預設兩個一起讀）
+  - `plot_e1.py` 新增 `paired_diff()`：同一段 a − b 的平均、95% CI、各自較好的段數；`tests/check_paired_diff.py` 手算檢查，通過
 
 ## E1 結果（MIR-1K 隨機 100 段，seed 0）
 
@@ -44,10 +48,13 @@
 | YIN | 0.965 ± 0.006 | 0.971 | 1.000 | 0.578 | 12.2 |
 | pYIN | 0.967 ± 0.005 | 0.968 | 0.994 | 0.314 | 11.7 |
 | pitchy | 0.937 ± 0.011 | 0.942 | 0.943 | **0.036** | **7.7** |
+| CREPE-tiny | 0.951 ± 0.006 | 0.951 | 0.960 | 0.077 | 13.2 |
 
 - YIN vs. pYIN：兩個 CI 重疊，但兩者跑的是**同樣 100 段**，應該用**配對比較**（同一段相減再算 CI；兩者逐段相關 0.92，段落難度的晃動會抵消）：
   pYIN − YIN = **+0.0025 ± 0.0023**（95% CI 不含 0；39 段較好、26 段較差、35 段平手）→ pYIN **統計上略好，但只差 0.25 個百分點，實務上可忽略**
 - pitchy 明顯較低
+- CREPE-tiny vs. pYIN（配對）：crepe − pYIN = **−0.016 ± 0.004**（10 段較好、83 段較差）→ 顯著但差距小；損失來自有聲判斷較保守（recall 0.960 vs. 0.994），說有聲時 99% 正確（rpa ÷ recall 0.991）
+- CREPE 的 `mean_abs_cents` 偏高有一部分是 torchcrepe 自己加的：輸出音高每格 20 cent，會加 ±20 cent 的隨機 dither（`torchcrepe/convert.py`，沒有 seed → 每次跑 cent 數字略有不同）
 - pitchy 的損失幾乎全是**漏聽**（rpa ≈ recall），聽到時誤差最小、誤報率比 pYIN 低近 10 倍 → 支持前端選用 pitchy
 - **YIN 的 recall = 1.000 不代表它好**：我們 `detect_pitch()` 裡 YIN 的有聲判斷是「音量 > 最大音量 2%」（`scoring/pitch_utils.py:42`），幾乎全判有聲。報告要註明
 - pitchy 的耗時（約 23 ms／秒）含重新取樣與啟動 Node，**不是演算法速度**，不要拿來和 YIN／pYIN 比
@@ -58,21 +65,23 @@
 
 （`python experiments/plot_e1.py` 重畫；陰影 = 95% CI）
 
-| SNR (dB) | YIN | pYIN | pitchy |
-| --- | --- | --- | --- |
-| clean | 0.965 / 0.578 | 0.967 / 0.314 | 0.937 / 0.036 |
-| 20 | 0.948 / 0.954 | 0.958 / 0.411 | 0.908 / 0.050 |
-| 10 | 0.769 / 0.995 | **0.851** / 0.465 | 0.650 / **0.100** |
-| 5 | 0.540 / 0.997 | 0.596 / 0.508 | 0.335 / 0.121 |
-| 0 | 0.304 / 0.999 | 0.257 / 0.574 | 0.111 / 0.139 |
-| −5 | 0.152 / 1.000 | 0.093 / 0.602 | 0.034 / 0.151 |
+| SNR (dB) | YIN | pYIN | pitchy | CREPE-tiny |
+| --- | --- | --- | --- | --- |
+| clean | 0.965 / 0.578 | 0.967 / 0.314 | 0.937 / 0.036 | 0.951 / 0.077 |
+| 20 | 0.948 / 0.954 | 0.958 / 0.411 | 0.908 / 0.050 | 0.945 / 0.211 |
+| 10 | 0.769 / 0.995 | 0.851 / 0.465 | 0.650 / **0.100** | **0.913** / 0.236 |
+| 5 | 0.540 / 0.997 | 0.596 / 0.508 | 0.335 / 0.121 | **0.851** / 0.249 |
+| 0 | 0.304 / 0.999 | 0.257 / 0.574 | 0.111 / 0.139 | **0.699** / 0.276 |
+| −5 | 0.152 / 1.000 | 0.093 / 0.602 | 0.034 / 0.151 | **0.417** / 0.311 |
 
-三種方法壞掉的方式不同：
+四種方法壞掉的方式不同：
 - **YIN**：把伴奏當人聲（10 dB 時 fa 0.995），八度錯誤大增
 - **pYIN**：rpa 最穩，但誤報升到一半。10 dB 配對比較 pYIN − YIN = **+0.083 ± 0.014**（93 段較好、7 段較差）→ 有伴奏時明顯比 YIN 穩
 - **0 dB 以下 YIN 的 rpa 反超 pYIN 是假象**：YIN 每格都判有聲（recall 1.000），不會因漏判失分；看「聽到的格子答對幾成」（rpa ÷ recall），0 dB 時 YIN 0.30、pYIN 0.37、pitchy 0.49
 - **pitchy**：伴奏讓 clarity 掉到門檻 0.85 以下 → 整格丟掉，**漏聽而不亂猜**（10 dB 時聽到的格子仍有 9 成正確）
 - → 「一定要戴耳機」的量化依據：伴奏漏到 10 dB，pitchy 漏掉約 28% 的演唱
+- **CREPE-tiny**：有伴奏時 rpa 最穩。10 dB 配對比較 crepe − pYIN = **+0.062 ± 0.019**（79 段較好、17 段較差）；0 dB 時 rpa ÷ recall = 0.95（pYIN 0.37）。代價是 fa：20 dB 就從 0.077 跳到 0.211 —— 人聲停下來（換氣）時只剩伴奏，CREPE 會抓到**伴奏樂器的音高**（`titon_5_04` 誤判格中 81% 與單獨伴奏的音高相差 < 50 cent）
+- CREPE 用的是 torchcrepe 預設的 **Viterbi 解碼（看整段）**，和 pYIN 一樣**不能即時**；速度中位數 77 ms／秒音訊（CPU）。在本專題定位為離線的上限參考，前端仍用 pitchy
 - `mean_abs_cents` 在 ≤ 5 dB 時接近隨機（約 200 cent），只看到 10 dB 即可
 
 ## 給大家的使用說明
@@ -91,10 +100,18 @@
 
 ```bash
 python experiments/pitch_benchmark.py --limit 10                       # MIR-1K 隨機 10 段
-python experiments/pitch_benchmark.py --limit 100 --methods yin pyin crepe
+python experiments/pitch_benchmark.py --limit 100 --methods yin pyin crepe   # crepe 需另外安裝，見下方
 python experiments/pitch_benchmark.py --snr-db clean 20 10 5 0 -5      # 混入伴奏
 python experiments/pitch_benchmark.py --dataset song --song <id>       # 自家歌（song.json 必須手動修正過）
 python tests/check_pitch_metrics.py                                    # 檢查指標
+python experiments/plot_e1.py                                          # 重畫 E1 圖 + 印出 crepe − pYIN 配對比較
+```
+
+**CREPE 的安裝（只裝 CPU 版）**：torchcrepe 會 import torchaudio，而 PyPI 上的 torchaudio 是 CUDA 版（沒有 NVIDIA GPU 會出現 `libcudart.so` 錯誤）。CPU 版 torchaudio 支援 Python 3.14 的最新版是 2.11，torch 要同版本：
+
+```bash
+uv pip install --python .venv torch==2.11.0 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cpu
+uv pip install --python .venv torchcrepe
 ```
 
 參數：`--limit 0` = 全部 1000 段；`--seed` 換抽樣；`--out` 改輸出路徑。
@@ -113,6 +130,5 @@ python tests/check_pitch_metrics.py                                    # 檢查�
 
 ## 接下來
 
-- CREPE-tiny（確認 torch 是否支援 Python 3.14），E1 的第 4 種方法
 - 等 #1 PR #5、#4 difficulty-ui merge 後改進逐音符判分（屆時函式名是 `processAudioFrame()`）
 - E1 完整結果與圖（12/04）

@@ -10,4 +10,4 @@ joblib
 # 選用：
 # demucs        # 原曲分離人聲與伴奏（offline/make_song.py）
 # xgboost       # scoring/train.py 會自動加入 XGBoost
-# torchcrepe    # pitch_utils.detect_pitch(method="crepe")
+# torchcrepe    # pitch_utils.detect_pitch(method="crepe")；CPU 版安裝方式見 docs/members/6-pkboie.md

@@ -1,10 +1,11 @@
-"""E1 圖：rpa 與 voicing_fa 隨 SNR 的變化（YIN / pYIN / pitchy）。
+"""E1 圖：rpa 與 voicing_fa 隨 SNR 的變化（YIN / pYIN / pitchy / CREPE-tiny）。
 
 用法：
-    python experiments/plot_e1.py                                   # 預設讀 e1_mir1k_100_snr.csv
-    python experiments/plot_e1.py --csv <檔案> --out <圖檔.png>
+    python experiments/plot_e1.py                                   # 預設讀 e1_mir1k_100_snr.csv + e1_mir1k_100_snr_crepe.csv
+    python experiments/plot_e1.py --csv <檔案> [<檔案> ...] --out <圖檔.png>
 
 輸入是 pitch_benchmark.py 的輸出：每一列 = 一段 × 一種方法 × 一種 SNR。
+多個 CSV 會直接上下接起來（crepe 另外跑、另外存檔，同一批 100 段）。
 """
 
 from __future__ import annotations
@@ -26,11 +27,12 @@ RESULTS = ROOT / "experiments" / "results"
 SNR_ORDER = ["clean", "20", "10", "5", "0", "-5"]
 SNR_LABELS = ["clean", "20", "10", "5", "0", "−5"]
 
-# 顏色跟著方法走，不跟著排名走（三色已通過色盲檢查）；marker 形狀是第二種辨識方式
+# 顏色跟著方法走，不跟著排名走（四色已通過色盲檢查）；marker 形狀是第二種辨識方式
 STYLE = {
     "yin": {"label": "YIN", "color": "#2a78d6", "marker": "o"},
     "pyin": {"label": "pYIN", "color": "#eb6834", "marker": "s"},
     "pitchy": {"label": "pitchy (McLeod)", "color": "#1baf7a", "marker": "^"},
+    "crepe": {"label": "CREPE-tiny", "color": "#eda100", "marker": "D"},
 }
 
 INK = "#0b0b0b"
@@ -53,6 +55,39 @@ def summarize(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     s = df.groupby(["method", "snr_db"])[metric].agg(["mean", "std", "count"])
     s["ci95"] = 1.96 * s["std"] / np.sqrt(s["count"])
     return s[["mean", "ci95"]]
+
+
+def paired_diff(
+    df: pd.DataFrame, method_a: str, method_b: str, snr: str, metric: str = "rpa"
+) -> pd.Series:
+    """配對比較：同一段的 method_a − method_b，只看某一個 SNR。
+
+    回傳 pd.Series，欄位：
+      - mean：逐段差值的平均（> 0 表示 method_a 比較好）
+      - ci95：差值的 95% CI 半寬 = 1.96 × 差值的標準差 ÷ √n
+      - n：有效段數（兩種方法在這段都有值）
+      - a_better：差值 > 0 的段數
+      - b_better：差值 < 0 的段數（差值剛好 = 0 的段兩邊都不算）
+
+    某一段若其中一個方法是 NaN，這段整個不算（不算進平均，也不算進 n）。
+    """
+    # TODO(#6)：照第 11 課的步驟寫
+    #   1. 只留 snr_db == snr 的列
+    #   2. pivot：index = 段名、columns = 方法、values = metric
+    #   3. 兩欄相減 → 每段一個差值，去掉 NaN
+    #   4. 算 mean、ci95、n、a_better、b_better，用 pd.Series({...}) 回傳
+    s = df[df["snr_db"] == snr]
+    p = s.pivot(index="clip", columns="method", values=metric)
+    diff = (p[method_a] - p[method_b]).dropna()
+    return pd.Series(
+        {
+            "mean": diff.mean(),
+            "ci95": 1.96 * diff.std() / np.sqrt(len(diff)),
+            "n": len(diff),
+            "a_better": (diff > 0).sum(),
+            "b_better": (diff < 0).sum(),
+        }
+    )
 
 
 def plot_metric(ax, summary: pd.DataFrame, title: str, ylabel: str, band: bool) -> None:
@@ -119,11 +154,21 @@ def label_line_ends(ax, summary: pd.DataFrame) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--csv", type=Path, default=RESULTS / "e1_mir1k_100_snr.csv")
+    ap.add_argument(
+        "--csv",
+        type=Path,
+        nargs="+",
+        default=[
+            RESULTS / "e1_mir1k_100_snr.csv",
+            RESULTS / "e1_mir1k_100_snr_crepe.csv",
+        ],
+    )
     ap.add_argument("--out", type=Path, default=RESULTS / "e1_snr.png")
     args = ap.parse_args()
 
-    df = pd.read_csv(args.csv, dtype={"snr_db": str})
+    df = pd.concat(
+        [pd.read_csv(f, dtype={"snr_db": str}) for f in args.csv], ignore_index=True
+    )
     n_clips = df["clip"].nunique()
 
     rpa = summarize(df, "rpa")
@@ -143,7 +188,7 @@ def main() -> None:
     ax2.set_xlim(-0.3, len(SNR_ORDER) - 1 + 0.9)  # 右邊留位置給直接標籤
 
     handles, labels = ax1.get_legend_handles_labels()
-    fig.legend(handles, labels, loc="upper right", ncol=3, frameon=False, fontsize=9.5)
+    fig.legend(handles, labels, loc="upper right", ncol=4, frameon=False, fontsize=9.5)
     fig.suptitle(
         f"E1 · Pitch tracking under accompaniment  (MIR-1K, {n_clips} clips, shaded = 95% CI)",
         x=0.01,
@@ -162,6 +207,16 @@ def main() -> None:
         .reindex(SNR_ORDER)
         .round(3)
     )
+
+    # 配對比較（同一批段才有意義）：CREPE vs. pYIN
+    if {"crepe", "pyin"} <= set(df["method"]):
+        print("\n配對比較 crepe − pyin（rpa）")
+        for snr in ["clean", "10"]:
+            r = paired_diff(df, "crepe", "pyin", snr)
+            print(
+                f"  {snr:>5}: {r['mean']:+.4f} ± {r['ci95']:.4f}"
+                f"（n = {r['n']:.0f}；crepe 較好 {r['a_better']:.0f} 段、pyin 較好 {r['b_better']:.0f} 段）"
+            )
 
 
 if __name__ == "__main__":
