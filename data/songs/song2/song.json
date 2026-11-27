@@ -1,956 +1,1238 @@
 {
- "title": "song2",
- "bpm": null,
- "duration": 72.45,
- "accompaniment": null,
- "notes": [
-  {
-   "start": 2.7,
-   "end": 2.91,
-   "midi": 52,
-   "lyric": ""
-  },
-  {
-   "start": 2.97,
-   "end": 3.19,
-   "midi": 49,
-   "lyric": ""
-  },
-  {
-   "start": 3.27,
-   "end": 3.4,
-   "midi": 52,
-   "lyric": ""
-  },
-  {
-   "start": 3.57,
-   "end": 4.61,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 5.67,
-   "end": 5.79,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 5.87,
-   "end": 6.3,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 6.68,
-   "end": 6.8,
-   "midi": 50,
-   "lyric": ""
-  },
-  {
-   "start": 7.02,
-   "end": 7.45,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 7.5,
-   "end": 7.67,
-   "midi": 55,
-   "lyric": ""
-  },
-  {
-   "start": 7.67,
-   "end": 8.1,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 9.16,
-   "end": 9.48,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 9.53,
-   "end": 9.7,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 9.77,
-   "end": 9.89,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 9.89,
-   "end": 10.12,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 10.12,
-   "end": 10.36,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 10.75,
-   "end": 11.46,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 13.15,
-   "end": 13.3,
-   "midi": 55,
-   "lyric": ""
-  },
-  {
-   "start": 13.3,
-   "end": 13.46,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 13.63,
-   "end": 13.83,
-   "midi": 52,
-   "lyric": ""
-  },
-  {
-   "start": 13.95,
-   "end": 14.18,
-   "midi": 49,
-   "lyric": ""
-  },
-  {
-   "start": 14.24,
-   "end": 14.9,
-   "midi": 49,
-   "lyric": ""
-  },
-  {
-   "start": 16.03,
-   "end": 16.26,
-   "midi": 51,
-   "lyric": ""
-  },
-  {
-   "start": 16.43,
-   "end": 16.57,
-   "midi": 49,
-   "lyric": ""
-  },
-  {
-   "start": 16.57,
-   "end": 16.67,
-   "midi": 50,
-   "lyric": ""
-  },
-  {
-   "start": 16.67,
-   "end": 16.78,
-   "midi": 51,
-   "lyric": ""
-  },
-  {
-   "start": 16.78,
-   "end": 16.88,
-   "midi": 50,
-   "lyric": ""
-  },
-  {
-   "start": 16.99,
-   "end": 17.15,
-   "midi": 55,
-   "lyric": ""
-  },
-  {
-   "start": 17.15,
-   "end": 17.62,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 17.62,
-   "end": 17.72,
-   "midi": 53,
-   "lyric": ""
-  },
-  {
-   "start": 17.72,
-   "end": 18.05,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 18.99,
-   "end": 19.12,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 19.18,
-   "end": 19.34,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 19.42,
-   "end": 19.54,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 19.62,
-   "end": 19.78,
-   "midi": 55,
-   "lyric": ""
-  },
-  {
-   "start": 19.88,
-   "end": 20.01,
-   "midi": 50,
-   "lyric": ""
-  },
-  {
-   "start": 20.01,
-   "end": 20.24,
-   "midi": 51,
-   "lyric": ""
-  },
-  {
-   "start": 20.55,
-   "end": 20.75,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 20.8,
-   "end": 20.9,
-   "midi": 53,
-   "lyric": ""
-  },
-  {
-   "start": 20.9,
-   "end": 21.29,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 21.29,
-   "end": 21.43,
-   "midi": 53,
-   "lyric": ""
-  },
-  {
-   "start": 21.43,
-   "end": 21.53,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 22.32,
-   "end": 22.46,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 22.66,
-   "end": 22.82,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 23.28,
-   "end": 23.41,
-   "midi": 62,
-   "lyric": ""
-  },
-  {
-   "start": 23.41,
-   "end": 23.53,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 23.59,
-   "end": 23.81,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 24.22,
-   "end": 24.66,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 24.72,
-   "end": 24.84,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 25.76,
-   "end": 25.86,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 25.91,
-   "end": 26.19,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 26.51,
-   "end": 26.62,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 26.7,
-   "end": 26.88,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 26.95,
-   "end": 27.15,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 27.41,
-   "end": 27.64,
-   "midi": 62,
-   "lyric": ""
-  },
-  {
-   "start": 27.68,
-   "end": 27.8,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 27.85,
-   "end": 27.98,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 28.23,
-   "end": 29.07,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 29.56,
-   "end": 29.78,
-   "midi": 52,
-   "lyric": ""
-  },
-  {
-   "start": 29.92,
-   "end": 30.13,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 30.24,
-   "end": 30.62,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 30.8,
-   "end": 30.92,
-   "midi": 65,
-   "lyric": ""
-  },
-  {
-   "start": 30.92,
-   "end": 31.05,
-   "midi": 64,
-   "lyric": ""
-  },
-  {
-   "start": 31.06,
-   "end": 31.42,
-   "midi": 62,
-   "lyric": ""
-  },
-  {
-   "start": 31.48,
-   "end": 31.7,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 31.9,
-   "end": 32.19,
-   "midi": 58,
-   "lyric": ""
-  },
-  {
-   "start": 32.45,
-   "end": 32.66,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 32.87,
-   "end": 33.06,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 33.18,
-   "end": 33.28,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 33.28,
-   "end": 33.42,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 33.65,
-   "end": 33.82,
-   "midi": 52,
-   "lyric": ""
-  },
-  {
-   "start": 33.82,
-   "end": 33.95,
-   "midi": 53,
-   "lyric": ""
-  },
-  {
-   "start": 34.03,
-   "end": 34.54,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 34.54,
-   "end": 34.65,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 34.69,
-   "end": 34.99,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 35.06,
-   "end": 35.26,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 35.26,
-   "end": 35.45,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 37.13,
-   "end": 37.32,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 37.35,
-   "end": 37.71,
-   "midi": 63,
-   "lyric": ""
-  },
-  {
-   "start": 37.76,
-   "end": 38.08,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 38.14,
-   "end": 38.56,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 38.61,
-   "end": 38.92,
-   "midi": 58,
-   "lyric": ""
-  },
-  {
-   "start": 38.92,
-   "end": 39.1,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 39.1,
-   "end": 39.42,
-   "midi": 58,
-   "lyric": ""
-  },
-  {
-   "start": 39.45,
-   "end": 39.71,
-   "midi": 58,
-   "lyric": ""
-  },
-  {
-   "start": 39.9,
-   "end": 40.03,
-   "midi": 48,
-   "lyric": ""
-  },
-  {
-   "start": 40.03,
-   "end": 40.24,
-   "midi": 49,
-   "lyric": ""
-  },
-  {
-   "start": 40.35,
-   "end": 40.58,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 40.64,
-   "end": 40.91,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 40.91,
-   "end": 41.24,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 41.24,
-   "end": 41.51,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 41.51,
-   "end": 41.71,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 41.71,
-   "end": 41.82,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 41.82,
-   "end": 42.17,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 43.81,
-   "end": 44.04,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 44.14,
-   "end": 44.4,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 44.54,
-   "end": 45.59,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 46.2,
-   "end": 46.47,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 46.47,
-   "end": 46.76,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 46.95,
-   "end": 47.2,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 47.38,
-   "end": 47.49,
-   "midi": 62,
-   "lyric": ""
-  },
-  {
-   "start": 47.49,
-   "end": 47.64,
-   "midi": 63,
-   "lyric": ""
-  },
-  {
-   "start": 47.75,
-   "end": 48.06,
-   "midi": 64,
-   "lyric": ""
-  },
-  {
-   "start": 48.22,
-   "end": 48.43,
-   "midi": 62,
-   "lyric": ""
-  },
-  {
-   "start": 48.48,
-   "end": 48.59,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 48.59,
-   "end": 48.7,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 48.82,
-   "end": 48.92,
-   "midi": 58,
-   "lyric": ""
-  },
-  {
-   "start": 48.95,
-   "end": 49.17,
-   "midi": 58,
-   "lyric": ""
-  },
-  {
-   "start": 49.17,
-   "end": 49.57,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 50.35,
-   "end": 50.47,
-   "midi": 55,
-   "lyric": ""
-  },
-  {
-   "start": 50.47,
-   "end": 50.57,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 50.79,
-   "end": 50.99,
-   "midi": 63,
-   "lyric": ""
-  },
-  {
-   "start": 51.04,
-   "end": 51.45,
-   "midi": 63,
-   "lyric": ""
-  },
-  {
-   "start": 51.61,
-   "end": 51.71,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 51.86,
-   "end": 52.23,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 52.37,
-   "end": 53.07,
-   "midi": 63,
-   "lyric": ""
-  },
-  {
-   "start": 53.24,
-   "end": 53.46,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 53.57,
-   "end": 53.89,
-   "midi": 58,
-   "lyric": ""
-  },
-  {
-   "start": 54.11,
-   "end": 54.42,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 54.49,
-   "end": 55.64,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 56.43,
-   "end": 56.83,
-   "midi": 63,
-   "lyric": ""
-  },
-  {
-   "start": 56.86,
-   "end": 57.0,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 57.09,
-   "end": 57.25,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 57.33,
-   "end": 57.47,
-   "midi": 58,
-   "lyric": ""
-  },
-  {
-   "start": 57.47,
-   "end": 58.03,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 58.63,
-   "end": 58.93,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 58.93,
-   "end": 59.12,
-   "midi": 62,
-   "lyric": ""
-  },
-  {
-   "start": 59.12,
-   "end": 59.51,
-   "midi": 63,
-   "lyric": ""
-  },
-  {
-   "start": 60.48,
-   "end": 60.75,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 60.79,
-   "end": 60.95,
-   "midi": 66,
-   "lyric": ""
-  },
-  {
-   "start": 61.13,
-   "end": 61.34,
-   "midi": 66,
-   "lyric": ""
-  },
-  {
-   "start": 61.62,
-   "end": 61.78,
-   "midi": 58,
-   "lyric": ""
-  },
-  {
-   "start": 62.05,
-   "end": 62.38,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 62.38,
-   "end": 62.55,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 62.64,
-   "end": 62.78,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 62.78,
-   "end": 63.24,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 63.24,
-   "end": 63.42,
-   "midi": 57,
-   "lyric": ""
-  },
-  {
-   "start": 64.45,
-   "end": 64.59,
-   "midi": 51,
-   "lyric": ""
-  },
-  {
-   "start": 64.67,
-   "end": 64.83,
-   "midi": 54,
-   "lyric": ""
-  },
-  {
-   "start": 64.98,
-   "end": 65.08,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 65.08,
-   "end": 65.21,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 65.35,
-   "end": 65.51,
-   "midi": 63,
-   "lyric": ""
-  },
-  {
-   "start": 65.79,
-   "end": 66.05,
-   "midi": 67,
-   "lyric": ""
-  },
-  {
-   "start": 66.1,
-   "end": 66.27,
-   "midi": 68,
-   "lyric": ""
-  },
-  {
-   "start": 66.48,
-   "end": 66.65,
-   "midi": 62,
-   "lyric": ""
-  },
-  {
-   "start": 66.8,
-   "end": 66.91,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 67.04,
-   "end": 67.37,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 67.5,
-   "end": 67.62,
-   "midi": 55,
-   "lyric": ""
-  },
-  {
-   "start": 67.62,
-   "end": 67.83,
-   "midi": 56,
-   "lyric": ""
-  },
-  {
-   "start": 67.91,
-   "end": 68.22,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 68.33,
-   "end": 68.47,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 68.54,
-   "end": 68.73,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 68.73,
-   "end": 68.99,
-   "midi": 61,
-   "lyric": ""
-  },
-  {
-   "start": 68.99,
-   "end": 69.28,
-   "midi": 62,
-   "lyric": ""
-  },
-  {
-   "start": 69.37,
-   "end": 69.5,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 69.5,
-   "end": 69.72,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 69.81,
-   "end": 70.19,
-   "midi": 60,
-   "lyric": ""
-  },
-  {
-   "start": 70.19,
-   "end": 70.55,
-   "midi": 59,
-   "lyric": ""
-  },
-  {
-   "start": 71.0,
-   "end": 71.1,
-   "midi": 36,
-   "lyric": ""
-  }
- ]
+  "title": "我只在乎你",
+  "bpm": null,
+  "duration": 261.329,
+  "accompaniment": "accompaniment.wav",
+  "notes": [
+    {
+      "start": 33.12,
+      "end": 33.31,
+      "midi": 54,
+      "lyric": "如"
+    },
+    {
+      "start": 33.38,
+      "end": 33.54,
+      "midi": 55,
+      "lyric": ""
+    },
+    {
+      "start": 33.54,
+      "end": 34.06,
+      "midi": 56,
+      "lyric": "果"
+    },
+    {
+      "start": 34.34,
+      "end": 34.46,
+      "midi": 57,
+      "lyric": "沒"
+    },
+    {
+      "start": 34.46,
+      "end": 34.61,
+      "midi": 56,
+      "lyric": ""
+    },
+    {
+      "start": 34.81,
+      "end": 34.96,
+      "midi": 59,
+      "lyric": "有"
+    },
+    {
+      "start": 34.96,
+      "end": 35.14,
+      "midi": 60,
+      "lyric": "遇"
+    },
+    {
+      "start": 35.21,
+      "end": 35.32,
+      "midi": 60,
+      "lyric": "見"
+    },
+    {
+      "start": 35.4,
+      "end": 35.5,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 35.85,
+      "end": 35.96,
+      "midi": 59,
+      "lyric": "你"
+    },
+    {
+      "start": 36.03,
+      "end": 36.29,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 36.47,
+      "end": 36.57,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 36.66,
+      "end": 36.83,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 37.09,
+      "end": 37.21,
+      "midi": 62,
+      "lyric": "我"
+    },
+    {
+      "start": 37.21,
+      "end": 37.43,
+      "midi": 61,
+      "lyric": "將"
+    },
+    {
+      "start": 37.79,
+      "end": 37.89,
+      "midi": 59,
+      "lyric": "會"
+    },
+    {
+      "start": 38.31,
+      "end": 38.45,
+      "midi": 61,
+      "lyric": "是在"
+    },
+    {
+      "start": 38.45,
+      "end": 38.63,
+      "midi": 60,
+      "lyric": "那"
+    },
+    {
+      "start": 38.72,
+      "end": 38.82,
+      "midi": 60,
+      "lyric": "裡"
+    },
+    {
+      "start": 39.0,
+      "end": 39.11,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 39.18,
+      "end": 39.3,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 39.61,
+      "end": 39.95,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 39.95,
+      "end": 40.14,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 40.25,
+      "end": 40.38,
+      "midi": 64,
+      "lyric": "日"
+    },
+    {
+      "start": 40.53,
+      "end": 40.89,
+      "midi": 65,
+      "lyric": "子"
+    },
+    {
+      "start": 40.94,
+      "end": 41.05,
+      "midi": 62,
+      "lyric": "過"
+    },
+    {
+      "start": 41.13,
+      "end": 41.48,
+      "midi": 66,
+      "lyric": "的"
+    },
+    {
+      "start": 41.56,
+      "end": 41.82,
+      "midi": 65,
+      "lyric": "怎"
+    },
+    {
+      "start": 41.82,
+      "end": 41.92,
+      "midi": 64,
+      "lyric": "麼"
+    },
+    {
+      "start": 41.99,
+      "end": 42.16,
+      "midi": 59,
+      "lyric": "樣"
+    },
+    {
+      "start": 43.04,
+      "end": 43.28,
+      "midi": 59,
+      "lyric": "人"
+    },
+    {
+      "start": 43.34,
+      "end": 43.46,
+      "midi": 61,
+      "lyric": ""
+    },
+    {
+      "start": 43.47,
+      "end": 43.61,
+      "midi": 58,
+      "lyric": "生"
+    },
+    {
+      "start": 43.93,
+      "end": 44.09,
+      "midi": 62,
+      "lyric": "是"
+    },
+    {
+      "start": 44.14,
+      "end": 44.3,
+      "midi": 62,
+      "lyric": ""
+    },
+    {
+      "start": 44.57,
+      "end": 44.85,
+      "midi": 61,
+      "lyric": "否"
+    },
+    {
+      "start": 44.85,
+      "end": 45.02,
+      "midi": 60,
+      "lyric": "要"
+    },
+    {
+      "start": 45.35,
+      "end": 45.46,
+      "midi": 56,
+      "lyric": "珍"
+    },
+    {
+      "start": 45.5,
+      "end": 45.69,
+      "midi": 54,
+      "lyric": ""
+    },
+    {
+      "start": 45.87,
+      "end": 46.15,
+      "midi": 54,
+      "lyric": "惜"
+    },
+    {
+      "start": 46.61,
+      "end": 46.73,
+      "midi": 55,
+      "lyric": ""
+    },
+    {
+      "start": 46.78,
+      "end": 46.92,
+      "midi": 58,
+      "lyric": ""
+    },
+    {
+      "start": 47.06,
+      "end": 47.29,
+      "midi": 54,
+      "lyric": "也"
+    },
+    {
+      "start": 47.4,
+      "end": 47.64,
+      "midi": 56,
+      "lyric": "許"
+    },
+    {
+      "start": 47.64,
+      "end": 47.74,
+      "midi": 57,
+      "lyric": ""
+    },
+    {
+      "start": 47.93,
+      "end": 48.03,
+      "midi": 55,
+      "lyric": "認"
+    },
+    {
+      "start": 48.03,
+      "end": 48.23,
+      "midi": 56,
+      "lyric": "識"
+    },
+    {
+      "start": 48.41,
+      "end": 48.52,
+      "midi": 57,
+      "lyric": "某"
+    },
+    {
+      "start": 48.54,
+      "end": 48.66,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 48.66,
+      "end": 48.8,
+      "midi": 60,
+      "lyric": "一"
+    },
+    {
+      "start": 48.89,
+      "end": 48.99,
+      "midi": 60,
+      "lyric": "人"
+    },
+    {
+      "start": 49.06,
+      "end": 49.17,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 49.17,
+      "end": 49.28,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 49.34,
+      "end": 49.47,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 49.52,
+      "end": 49.62,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 49.62,
+      "end": 49.73,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 49.73,
+      "end": 50.07,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 50.12,
+      "end": 50.39,
+      "midi": 58,
+      "lyric": "過"
+    },
+    {
+      "start": 50.39,
+      "end": 50.49,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 50.53,
+      "end": 50.79,
+      "midi": 60,
+      "lyric": "著"
+    },
+    {
+      "start": 50.79,
+      "end": 50.93,
+      "midi": 62,
+      "lyric": ""
+    },
+    {
+      "start": 50.99,
+      "end": 51.14,
+      "midi": 62,
+      "lyric": "平"
+    },
+    {
+      "start": 51.19,
+      "end": 51.32,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 51.41,
+      "end": 51.53,
+      "midi": 60,
+      "lyric": "凡"
+    },
+    {
+      "start": 51.64,
+      "end": 51.91,
+      "midi": 57,
+      "lyric": ""
+    },
+    {
+      "start": 52.19,
+      "end": 52.33,
+      "midi": 60,
+      "lyric": "的"
+    },
+    {
+      "start": 52.41,
+      "end": 52.52,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 52.6,
+      "end": 52.73,
+      "midi": 60,
+      "lyric": "日"
+    },
+    {
+      "start": 52.8,
+      "end": 52.91,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 52.91,
+      "end": 53.01,
+      "midi": 59,
+      "lyric": "子"
+    },
+    {
+      "start": 53.17,
+      "end": 53.28,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 53.28,
+      "end": 53.53,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 53.53,
+      "end": 53.89,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 53.92,
+      "end": 54.03,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 54.03,
+      "end": 54.14,
+      "midi": 65,
+      "lyric": "不"
+    },
+    {
+      "start": 54.18,
+      "end": 54.32,
+      "midi": 65,
+      "lyric": "知"
+    },
+    {
+      "start": 54.46,
+      "end": 54.6,
+      "midi": 64,
+      "lyric": "道"
+    },
+    {
+      "start": 54.61,
+      "end": 54.79,
+      "midi": 62,
+      "lyric": ""
+    },
+    {
+      "start": 54.85,
+      "end": 55.05,
+      "midi": 67,
+      "lyric": "會"
+    },
+    {
+      "start": 55.24,
+      "end": 55.39,
+      "midi": 65,
+      "lyric": "不"
+    },
+    {
+      "start": 55.52,
+      "end": 55.7,
+      "midi": 59,
+      "lyric": "會"
+    },
+    {
+      "start": 56.73,
+      "end": 56.98,
+      "midi": 59,
+      "lyric": ""
+    },
+    {
+      "start": 57.53,
+      "end": 57.67,
+      "midi": 61,
+      "lyric": "也"
+    },
+    {
+      "start": 57.67,
+      "end": 57.99,
+      "midi": 62,
+      "lyric": "有"
+    },
+    {
+      "start": 58.04,
+      "end": 58.2,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 58.28,
+      "end": 58.64,
+      "midi": 62,
+      "lyric": "愛"
+    },
+    {
+      "start": 58.77,
+      "end": 58.9,
+      "midi": 68,
+      "lyric": "情"
+    },
+    {
+      "start": 58.9,
+      "end": 59.01,
+      "midi": 69,
+      "lyric": "甜"
+    },
+    {
+      "start": 59.01,
+      "end": 59.18,
+      "midi": 68,
+      "lyric": ""
+    },
+    {
+      "start": 59.18,
+      "end": 59.58,
+      "midi": 67,
+      "lyric": "如"
+    },
+    {
+      "start": 59.66,
+      "end": 59.78,
+      "midi": 67,
+      "lyric": "蜜"
+    },
+    {
+      "start": 60.12,
+      "end": 60.24,
+      "midi": 66,
+      "lyric": ""
+    },
+    {
+      "start": 60.32,
+      "end": 60.43,
+      "midi": 66,
+      "lyric": ""
+    },
+    {
+      "start": 60.92,
+      "end": 61.03,
+      "midi": 66,
+      "lyric": ""
+    },
+    {
+      "start": 61.21,
+      "end": 61.32,
+      "midi": 59,
+      "lyric": "任"
+    },
+    {
+      "start": 61.4,
+      "end": 61.54,
+      "midi": 60,
+      "lyric": "時光"
+    },
+    {
+      "start": 62.09,
+      "end": 62.32,
+      "midi": 67,
+      "lyric": "匆匆"
+    },
+    {
+      "start": 62.35,
+      "end": 62.55,
+      "midi": 67,
+      "lyric": "流"
+    },
+    {
+      "start": 62.76,
+      "end": 62.87,
+      "midi": 69,
+      "lyric": "去"
+    },
+    {
+      "start": 63.16,
+      "end": 63.32,
+      "midi": 67,
+      "lyric": ""
+    },
+    {
+      "start": 63.42,
+      "end": 63.54,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 63.74,
+      "end": 63.85,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 63.98,
+      "end": 64.49,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 64.49,
+      "end": 64.62,
+      "midi": 65,
+      "lyric": "我"
+    },
+    {
+      "start": 64.9,
+      "end": 65.09,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 65.16,
+      "end": 65.3,
+      "midi": 61,
+      "lyric": "只"
+    },
+    {
+      "start": 65.55,
+      "end": 65.99,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 65.99,
+      "end": 66.18,
+      "midi": 61,
+      "lyric": "在"
+    },
+    {
+      "start": 66.26,
+      "end": 66.37,
+      "midi": 61,
+      "lyric": ""
+    },
+    {
+      "start": 66.55,
+      "end": 66.65,
+      "midi": 62,
+      "lyric": "乎"
+    },
+    {
+      "start": 67.04,
+      "end": 67.15,
+      "midi": 61,
+      "lyric": ""
+    },
+    {
+      "start": 67.9,
+      "end": 68.03,
+      "midi": 71,
+      "lyric": "你"
+    },
+    {
+      "start": 68.26,
+      "end": 68.37,
+      "midi": 71,
+      "lyric": ""
+    },
+    {
+      "start": 68.93,
+      "end": 69.13,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 69.13,
+      "end": 69.27,
+      "midi": 67,
+      "lyric": "心"
+    },
+    {
+      "start": 69.36,
+      "end": 69.47,
+      "midi": 66,
+      "lyric": ""
+    },
+    {
+      "start": 69.98,
+      "end": 70.14,
+      "midi": 67,
+      "lyric": "甘"
+    },
+    {
+      "start": 70.45,
+      "end": 70.66,
+      "midi": 65,
+      "lyric": "情"
+    },
+    {
+      "start": 70.73,
+      "end": 70.94,
+      "midi": 63,
+      "lyric": "願"
+    },
+    {
+      "start": 71.29,
+      "end": 71.44,
+      "midi": 65,
+      "lyric": "感"
+    },
+    {
+      "start": 72.18,
+      "end": 72.29,
+      "midi": 56,
+      "lyric": "染"
+    },
+    {
+      "start": 72.34,
+      "end": 72.46,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 72.76,
+      "end": 72.91,
+      "midi": 60,
+      "lyric": "你"
+    },
+    {
+      "start": 72.91,
+      "end": 73.1,
+      "midi": 61,
+      "lyric": "的氣息"
+    },
+    {
+      "start": 74.98,
+      "end": 75.14,
+      "midi": 63,
+      "lyric": ""
+    },
+    {
+      "start": 75.73,
+      "end": 75.85,
+      "midi": 61,
+      "lyric": ""
+    },
+    {
+      "start": 75.85,
+      "end": 75.97,
+      "midi": 62,
+      "lyric": ""
+    },
+    {
+      "start": 76.06,
+      "end": 76.24,
+      "midi": 60,
+      "lyric": "人生"
+    },
+    {
+      "start": 76.53,
+      "end": 76.69,
+      "midi": 61,
+      "lyric": "幾"
+    },
+    {
+      "start": 76.69,
+      "end": 76.9,
+      "midi": 62,
+      "lyric": "何"
+    },
+    {
+      "start": 76.92,
+      "end": 77.08,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 77.08,
+      "end": 77.18,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 77.36,
+      "end": 77.47,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 78.41,
+      "end": 78.53,
+      "midi": 62,
+      "lyric": "能夠"
+    },
+    {
+      "start": 79.22,
+      "end": 79.62,
+      "midi": 67,
+      "lyric": "得到"
+    },
+    {
+      "start": 79.93,
+      "end": 80.35,
+      "midi": 69,
+      "lyric": "知"
+    },
+    {
+      "start": 80.83,
+      "end": 80.94,
+      "midi": 67,
+      "lyric": "己"
+    },
+    {
+      "start": 81.47,
+      "end": 81.57,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 81.84,
+      "end": 81.94,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 82.17,
+      "end": 82.45,
+      "midi": 65,
+      "lyric": "失"
+    },
+    {
+      "start": 82.7,
+      "end": 82.82,
+      "midi": 61,
+      "lyric": "去"
+    },
+    {
+      "start": 83.1,
+      "end": 83.26,
+      "midi": 69,
+      "lyric": "生"
+    },
+    {
+      "start": 83.48,
+      "end": 83.79,
+      "midi": 69,
+      "lyric": ""
+    },
+    {
+      "start": 83.95,
+      "end": 84.06,
+      "midi": 67,
+      "lyric": "命"
+    },
+    {
+      "start": 84.06,
+      "end": 84.2,
+      "midi": 66,
+      "lyric": ""
+    },
+    {
+      "start": 84.2,
+      "end": 84.51,
+      "midi": 65,
+      "lyric": "的"
+    },
+    {
+      "start": 84.59,
+      "end": 84.76,
+      "midi": 69,
+      "lyric": "力"
+    },
+    {
+      "start": 85.3,
+      "end": 85.54,
+      "midi": 68,
+      "lyric": "量"
+    },
+    {
+      "start": 85.68,
+      "end": 85.84,
+      "midi": 67,
+      "lyric": ""
+    },
+    {
+      "start": 86.1,
+      "end": 86.22,
+      "midi": 65,
+      "lyric": "也"
+    },
+    {
+      "start": 86.43,
+      "end": 86.58,
+      "midi": 65,
+      "lyric": "不"
+    },
+    {
+      "start": 86.84,
+      "end": 86.95,
+      "midi": 66,
+      "lyric": ""
+    },
+    {
+      "start": 87.21,
+      "end": 87.31,
+      "midi": 66,
+      "lyric": "可"
+    },
+    {
+      "start": 87.56,
+      "end": 87.67,
+      "midi": 66,
+      "lyric": "惜"
+    },
+    {
+      "start": 88.01,
+      "end": 88.12,
+      "midi": 67,
+      "lyric": ""
+    },
+    {
+      "start": 88.36,
+      "end": 88.46,
+      "midi": 67,
+      "lyric": ""
+    },
+    {
+      "start": 88.65,
+      "end": 88.75,
+      "midi": 67,
+      "lyric": ""
+    },
+    {
+      "start": 89.06,
+      "end": 89.26,
+      "midi": 67,
+      "lyric": "所"
+    },
+    {
+      "start": 89.52,
+      "end": 89.7,
+      "midi": 67,
+      "lyric": "以"
+    },
+    {
+      "start": 89.98,
+      "end": 90.1,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 90.4,
+      "end": 90.5,
+      "midi": 64,
+      "lyric": "我"
+    },
+    {
+      "start": 90.83,
+      "end": 91.0,
+      "midi": 64,
+      "lyric": "求"
+    },
+    {
+      "start": 91.24,
+      "end": 91.44,
+      "midi": 66,
+      "lyric": "求"
+    },
+    {
+      "start": 91.44,
+      "end": 91.68,
+      "midi": 67,
+      "lyric": ""
+    },
+    {
+      "start": 91.75,
+      "end": 91.85,
+      "midi": 68,
+      "lyric": "你"
+    },
+    {
+      "start": 92.37,
+      "end": 92.73,
+      "midi": 69,
+      "lyric": ""
+    },
+    {
+      "start": 93.04,
+      "end": 93.35,
+      "midi": 65,
+      "lyric": "別"
+    },
+    {
+      "start": 93.56,
+      "end": 93.77,
+      "midi": 73,
+      "lyric": "讓"
+    },
+    {
+      "start": 93.81,
+      "end": 94.05,
+      "midi": 71,
+      "lyric": ""
+    },
+    {
+      "start": 94.29,
+      "end": 94.39,
+      "midi": 66,
+      "lyric": "我"
+    },
+    {
+      "start": 94.75,
+      "end": 94.92,
+      "midi": 64,
+      "lyric": "離"
+    },
+    {
+      "start": 95.21,
+      "end": 95.37,
+      "midi": 62,
+      "lyric": "開"
+    },
+    {
+      "start": 95.37,
+      "end": 95.48,
+      "midi": 61,
+      "lyric": ""
+    },
+    {
+      "start": 95.48,
+      "end": 95.59,
+      "midi": 62,
+      "lyric": "你"
+    },
+    {
+      "start": 96.57,
+      "end": 96.79,
+      "midi": 63,
+      "lyric": ""
+    },
+    {
+      "start": 97.03,
+      "end": 97.15,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 97.31,
+      "end": 97.57,
+      "midi": 59,
+      "lyric": "除"
+    },
+    {
+      "start": 97.57,
+      "end": 97.67,
+      "midi": 60,
+      "lyric": ""
+    },
+    {
+      "start": 97.72,
+      "end": 97.95,
+      "midi": 64,
+      "lyric": "了"
+    },
+    {
+      "start": 97.95,
+      "end": 98.1,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 98.15,
+      "end": 98.54,
+      "midi": 69,
+      "lyric": "你"
+    },
+    {
+      "start": 98.64,
+      "end": 98.96,
+      "midi": 71,
+      "lyric": ""
+    },
+    {
+      "start": 98.97,
+      "end": 99.14,
+      "midi": 73,
+      "lyric": "我"
+    },
+    {
+      "start": 99.23,
+      "end": 99.39,
+      "midi": 66,
+      "lyric": ""
+    },
+    {
+      "start": 99.65,
+      "end": 99.88,
+      "midi": 66,
+      "lyric": "不"
+    },
+    {
+      "start": 99.96,
+      "end": 100.09,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 100.4,
+      "end": 100.51,
+      "midi": 61,
+      "lyric": "能"
+    },
+    {
+      "start": 100.67,
+      "end": 100.87,
+      "midi": 64,
+      "lyric": "感"
+    },
+    {
+      "start": 101.16,
+      "end": 101.33,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 101.53,
+      "end": 101.74,
+      "midi": 65,
+      "lyric": "到"
+    },
+    {
+      "start": 101.78,
+      "end": 102.0,
+      "midi": 67,
+      "lyric": ""
+    },
+    {
+      "start": 102.0,
+      "end": 102.2,
+      "midi": 66,
+      "lyric": "一"
+    },
+    {
+      "start": 102.54,
+      "end": 102.64,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 102.64,
+      "end": 102.74,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 102.83,
+      "end": 102.93,
+      "midi": 65,
+      "lyric": "絲"
+    },
+    {
+      "start": 103.11,
+      "end": 103.21,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 103.39,
+      "end": 103.5,
+      "midi": 65,
+      "lyric": "絲"
+    },
+    {
+      "start": 103.59,
+      "end": 103.7,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 103.78,
+      "end": 103.89,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 104.16,
+      "end": 104.27,
+      "midi": 65,
+      "lyric": "情"
+    },
+    {
+      "start": 104.44,
+      "end": 104.56,
+      "midi": 64,
+      "lyric": ""
+    },
+    {
+      "start": 104.71,
+      "end": 104.83,
+      "midi": 65,
+      "lyric": "意"
+    },
+    {
+      "start": 104.91,
+      "end": 105.04,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 105.09,
+      "end": 105.23,
+      "midi": 65,
+      "lyric": ""
+    },
+    {
+      "start": 105.3,
+      "end": 106,
+      "midi": 65,
+      "lyric": ""
+    }
+  ]
 }

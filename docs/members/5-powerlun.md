@@ -1,17 +1,18 @@
 
 # #5：離線處理與特徵工程（Offline Pipeline & Feature Engineering）
 
-> 最後更新：2026-11-27  
+> 最後更新：2026-11-28  
 > 負責人：powerlun
 
 ## 目前在做
 
-- Branch：`feature/w2-offline-features-v2`
+- Branch：請以本次提交前的 `git branch --show-current` 為準（歷史 W2 開發分支：`feature/w2-offline-features-v2`）
 - 目前重點：
   - 完成 W2 新版 Features 的 GitHub 提交及與 #3 的交接。
   - 協助 #3 比較新版與舊版 Features 的模型表現。
   - 持續改善正式 Demo 的參考音高與歌詞時間對齊。
-  - 準備第二首正式 Demo 歌曲。
+  - song6 已有前 60 秒含歌詞 v1；song2 已在 localhost 測試約 105 秒的音符／歌詞候選版本。
+  - 準備兩首 Demo 的 JSON 交付、音檔雲端分享與跨環境驗收。
 
 ## 本週目標（對照 PROJECT_PLAN.md）
 
@@ -27,8 +28,10 @@
 - [x] 完成新版 Features 的基本資料品質檢查。
 - [x] 將 Acapella song6 參考旋律與正式 Karaoke Demo 分離。
 - [ ] 完成新版 Features 的模型效果驗證（與 #3 合作）。
-- [ ] 完成正式 song6 的完整歌詞與參考音高校正。
-- [ ] 完成第二首正式 Demo 歌曲。
+- [x] 將 song6 的歌詞與音符候選版本延伸至前 60 秒，並完成 localhost 顯示測試。
+- [x] 建立第二首 Demo song2《我只在乎你》的音訊分離、MIDI 與歌詞候選版本，並在 localhost 測試約 105 秒。
+- [ ] 完成兩首 Demo 的人工音高、逐字節拍校正及跨環境驗收。
+- [ ] 完成兩首 Demo 資料的正式分享與交付。
 
 ## 已完成
 
@@ -132,14 +135,40 @@
 
 新版的移調估計偏保守，132 筆資料中有 127 筆 `key_shift = 0`，因此目前不將該欄位視為已驗證的可靠移調標籤。
 
+### 2026-11-28：Two Demo Songs — Lyrics & Localhost Integration
+
+#### song6《月亮代表我的心》
+
+- 將原先前 35 秒的歌詞初稿延伸至前 60 秒，更新 `data/songs/song6/song.json` 與 `lyrics_timing.json`。
+- 依人工聽辨提供的句子時間修正 36～60 秒歌詞段落；最後一句確認於 55～60 秒。
+- 結構測試：完整 `song.json` 共 363 個音符；前 60 秒 117 個音符；9 段歌詞時間資訊；音符與歌詞基本格式檢查通過。
+- localhost 已確認可顯示前 60 秒歌詞與音高線。
+- **限制**：歌詞字級／節拍對齊仍有偏差；pYIN 偵測的 MIDI 尚未取得完整人工 Ground Truth，不能聲稱音高準確度已驗收。
+
+#### song2《我只在乎你》
+
+- 新增第二首正式 Demo，使用 Demucs 由 `source.mp3` 分離 `vocals.wav`、`accompaniment.wav`。
+- 以 pYIN 先建立前 60 秒 MIDI 初稿（91 個音符），再運用專案現有的 `scoring.pitch_utils` 將後段延伸至約 106 秒。
+- 依人工聽辨記錄 33～105 秒共 17 段歌詞時間，儲存於 `data/songs/song2/lyrics_timing.json`，並產生 `song.json` 的逐音符歌詞候選標記。
+- 已於 localhost 檢視延伸後的音符、歌詞與播放效果；目前可視為**可展示的候選 v1**。
+- 特別保留舊有 Acapella song2 參考檔備份，避免與正式 Demo 的 `song.json` 混用。
+- **限制**：音高、音符切割與逐字對齊仍是自動結果／粗略人工句級時間，尚未完成標準答案驗證。
+
+#### Git 交付規劃
+
+- 本次優先提交 song2、song6 的 `song.json`、`lyrics_timing.json` 以及此進度文件。
+- 原曲 MP3、大型 WAV 與本地備份暫不新增至 Git；依團隊規劃以雲端硬碟分享音訊。
+- 用 `git status --short`、`git diff --cached --stat` 審核實際提交內容，避免把診斷腳本、暫存資料或其他分支修正混入。
+- 兩首 Demo 的 JSON 需在其他組員環境驗證與音訊匹配後，才能視為正式交付完成。
+
 ## 卡住／需要別人
 
 - 需要 #3 協助比較 `features.csv` 與 `features_v2.csv` 在相同模型設定下的訓練與測試結果。
 - 目前仍使用 Singer 0 作為代理參考旋律，可能造成自我參考偏差。
 - 時間對齊與移調估計尚未使用人工標註的標準答案進行驗證。
 - 歌唱人聲的 Whisper 辨識仍有漏字、錯字與時間錯位問題。
-- 正式 song6 Demo 的 pYIN 音符與歌詞時間仍需要進一步人工校正。
-- 正式 Demo 仍需要其他組員協助進行跨環境整合測試。
+- song6、song2 的 pYIN 音符及歌詞時間仍需進一步人工校正；目前兩首均僅是候選 v1。
+- 正式 Demo 仍需要其他組員協助進行跨環境整合測試，並確認兩首音檔的雲端分享方式。
 
 ## 筆記
 
@@ -209,7 +238,7 @@ Expression 訓練目標：
 python offline/align_lyrics.py
 ```
 
-目前正式 song6 約 205 秒，前 35 秒已加入初步對齊歌詞，其餘段落尚未完成。
+目前正式 song6 全曲約 205 秒，前 60 秒已有歌詞初步對齊；song2 全曲約 261 秒，約前 105 秒已有音高與歌詞候選資料。兩首皆尚未完成音高與逐字節拍人工驗證。
 
 ### 4. Acapella 與正式 Demo 的區別
 
@@ -225,4 +254,4 @@ python offline/align_lyrics.py
 - 目前移調估計偏保守，尚未確認能穩定辨識真正的升降 Key。
 - 使用評分標籤挑選高分參考歌手可能造成標籤洩漏，因此尚未採用於正式 Features。
 - 下一步由 #3 進行新舊 Features 模型比較，並視結果決定是否採用新版。
-- 持續改善正式 Demo 的參考音高、歌詞時間對齊及第二首歌曲處理。
+- 持續改善兩首正式 Demo 的參考音高、歌詞時間對齊，完成雲端檔案分享與跨環境測試。
