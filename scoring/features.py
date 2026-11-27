@@ -317,8 +317,17 @@ def extract_features(song, frames, offset_ms=0.0):
         sung = [usr[j] for j in js if not np.isnan(usr[j])]
         coverage = len(sung) / max(1, b - a)
         if sung:
-            sung_med = float(np.median(sung))
-            cents = float(fold_cents(sung_med - note["midi"]))
+            # Fold octave errors per frame before aggregating.
+            # This prevents mixed-octave detections from producing
+            # a median pitch between the two octave clusters.
+            target_midi = float(note["midi"])
+            frame_errors = np.asarray(
+                fold_cents(np.asarray(sung, dtype=float) - target_midi),
+                dtype=float,
+            )
+            cents = float(np.median(frame_errors))
+            # Octave-normalized sung MIDI for downstream contour features.
+            sung_med = target_midi + cents / 100.0
             voiced_js = [j for j in js if not np.isnan(usr[j])]
             onset_ms = (voiced_js[0] - a) * DTW_HOP * 1000.0
         else:
