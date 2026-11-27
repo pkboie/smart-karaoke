@@ -1,11 +1,11 @@
 # #6 pkboie：即時判分、音高準確度
 
-> 最後更新：2026-11-27（CREPE-tiny 加入 E1）
+> 最後更新：2026-11-27（逐音符判分改進）
 
 ## 目前在做
 
-- branch：`pitch/e1-crepe`（準備開 PR）
-- 內容：CREPE-tiny 成為 E1 第 4 種方法；`plot_e1.py` 加上配對比較 `paired_diff()`
+- branch：`pitch/note-judging`（開 PR 中）
+- 內容：即時判分改成和後端一樣「一個音符一個中位數」，並跳過音符開頭的滑音
 
 ## 本週目標（對照 PROJECT_PLAN.md）
 
@@ -18,6 +18,7 @@
 - [x] MIR-1K 100 段 + 各 SNR 的完整數字
 - [x] E1 的圖
 - [x] CREPE-tiny 加入 E1
+- [x] 逐音符判分改進（M2 檢查點 11/29）
 
 ## 已完成
 
@@ -38,6 +39,11 @@
 - 2026-11-27：**CREPE-tiny 加入 E1**
   - 100 段 × 6 種 SNR：`experiments/results/e1_mir1k_100_snr_crepe.csv`（和 `e1_mir1k_100_snr.csv` 同一批段，`plot_e1.py` 預設兩個一起讀）
   - `plot_e1.py` 新增 `paired_diff()`：同一段 a − b 的平均、95% CI、各自較好的段數；`tests/check_paired_diff.py` 手算檢查，通過
+- 2026-11-27：**逐音符判分改進**（`frontend/note-judge.js`）
+  - 音符開頭 min(80 ms, 音符長度 ÷ 2) 不算（唱新音時的滑音不是唱錯）
+  - 音符唱完後，每格先折八度再取**中位數**，|中位數| < 容許值 = 命中；唱到的格數 < 30% → 未判定（和後端 `per_note` 的 coverage 一致）
+  - 即時命中率改成「已判定的音符中命中幾個」，和結果頁同單位
+  - `tests/check_note_judge.mjs`：18 個手算案例，通過
 
 ## E1 結果（MIR-1K 隨機 100 段，seed 0）
 
@@ -104,6 +110,7 @@ python experiments/pitch_benchmark.py --limit 100 --methods yin pyin crepe   # c
 python experiments/pitch_benchmark.py --snr-db clean 20 10 5 0 -5      # 混入伴奏
 python experiments/pitch_benchmark.py --dataset song --song <id>       # 自家歌（song.json 必須手動修正過）
 python tests/check_pitch_metrics.py                                    # 檢查指標
+node tests/check_note_judge.mjs                                        # 檢查逐音符判分
 python experiments/plot_e1.py                                          # 重畫 E1 圖 + 印出 crepe − pYIN 配對比較
 ```
 
@@ -126,9 +133,9 @@ uv pip install --python .venv torchcrepe
 
 - **#1**：**E3 的 MIR-1K 部分已經跑完**（上表，`e1_mir1k_100_snr.csv`），可以直接用。建議你專心做自錄的耳機 vs. 喇叭對照，以及自適應 VAD 能不能拉高 pitchy 的 recall（漏聽主因是固定門檻）
 - **#2**：CSV 已有 `ms_per_sec` 欄位可當 E2 起點。注意第一段有暖機成本（YIN 38 ms，之後 2–3 ms），請取中位數或丟掉第一次
-- **#4**：`codex/difficulty-ui`（PR #11）已 merge，之後我會從新的 master 開 `pitch/note-judging` 改 `processAudioFrame()`（忽略音符開頭 80 ms、改用中位數判定），動到 `main.js` 前會先跟你說
+- **#4**：`pitch/note-judging` 改了 `main.js` 的 `processAudioFrame()`、`draw()` 上色與即時命中率，請 review
+- **#5／#3**：`scoring/features.py` 的 `per_note` 是先 `np.median` 再 `fold_cents`。偵測器在高低八度之間跳動時會判錯（例：目標 64、格子 [64.0, 64.1, 76.0, 76.1] → 算出 −595 cent，應為 +5）。建議改成先每格 fold 再取中位數
 
 ## 接下來
 
-- 等 #1 PR #5、#4 difficulty-ui merge 後改進逐音符判分（屆時函式名是 `processAudioFrame()`）
 - E1 完整結果與圖（12/04）

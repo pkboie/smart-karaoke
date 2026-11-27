@@ -2,6 +2,7 @@
 // 即時音高偵測在瀏覽器裡做（pitchy），唱完把 trace 送到後端評分。
 // pitchy 4.1.0 已打包在 vendor/，現場 demo 沒有網路也能用
 import { PitchDetector } from "./vendor/pitchy.js";
+import { foldCents, inJudgeWindow, judgeNote } from "./note-judge.js";
 
 const $ = (id) => document.getElementById(id);
 const audio = $("audio");
@@ -18,7 +19,7 @@ const CALIBRATION_MS = 1000;    // Measure background noise for 1 second
 
 let song = null, songId = null;
 let frames = [];             // 送給後端的 trace
-let noteStats = [];          // 每個音符：唱到幾格、命中幾格
+let noteStats = [];          // 每個音符：判斷窗內有聲格的 MIDI、唱完後的判定結果
 let micCtx = null;
 let analyser = null;
 let detector = null;
@@ -32,6 +33,8 @@ let rmsThreshold = RMS_MIN;
 let backgroundRms = 0;
 
 let pitchTolerance = 100;
+const HOP_SAMPLES = 1024;    // 和 mic-processor.js 的 hopSize 相同：每 1024 樣本送一格
+let hopSec = HOP_SAMPLES / 48000;   // 開麥克風後依實際取樣率更新
 
 // ---------- 載入歌曲 ----------
 async function loadSongs() {
@@ -88,13 +91,14 @@ async function loadSong(id) {
 }
 function resetStats() {
   frames = [];
-  noteStats = song.notes.map(() => ({ voiced: 0, hit: 0 }));
+  // result：undefined = 還沒唱完；null = 唱完但沒有格子（未判定）；{centError, hit} = 已判定
+  noteStats = song.notes.map(() => ({ midis: [], result: undefined }));
 }
 $("song").onchange = (e) => loadSong(e.target.value);
 
 // ---------- 音高 ----------
 const hzToMidi = (hz) => 69 + 12 * Math.log2(hz / 440);
-const foldCents = (d) => ((((d * 100) % 1200) + 1800) % 1200) - 600;  // 忽略八度
+const latencySec = () => Number($("latency").value) / 1000;
 const midiRange = () => {
   const ms = song.notes.map((n) => n.midi);
   return [Math.min(...ms) - 3, Math.max(...ms) + 3];
@@ -112,6 +116,7 @@ async function startMic() {
 
   micCtx = new AudioContext();
   await micCtx.resume();
+  hopSec = HOP_SAMPLES / micCtx.sampleRate;
 
   // Keep analyser for background noise calibration.
   analyser = micCtx.createAnalyser();
@@ -251,8 +256,7 @@ function processAudioFrame(audioFrame) {
     hz < 1100;
 
   // Keep existing latency calculation
-  const latency = Number($("latency").value) / 1000;
-  const t = audio.currentTime - latency;
+  const t = audio.currentTime - latencySec();
 
   const midi = voiced ? hzToMidi(hz) : null;
 
@@ -265,22 +269,19 @@ function processAudioFrame(audioFrame) {
     rms
   });
 
-  // Real-time note judging
-  const idx = song.notes.findIndex(
-    (n) => t >= n.start && t < n.end
-  );
+  // 逐音符判分：先收集判斷窗內（跳過開頭滑音）的有聲格，音符唱完再由 noteResult() 取中位數判定
+  const idx = song.notes.findIndex((n) => inJudgeWindow(t, n));
+  if (idx >= 0 && voiced) noteStats[idx].midis.push(midi);
+}
 
-  if (idx >= 0 && voiced) {
-    noteStats[idx].voiced++;
-
-    if (
-      Math.abs(
-        foldCents(midi - song.notes[idx].midi)
-      ) < pitchTolerance
-    ) {
-      noteStats[idx].hit++;
-    }
+// 第 i 個音符的判定結果。唱完（扣掉延遲後的時間過了 end）才判定一次並記下來；
+// 用 t 而不是 audio.currentTime 判斷「唱完」，否則延遲期間還在送進來的格子會被漏掉
+function noteResult(i) {
+  const st = noteStats[i], n = song.notes[i];
+  if (st.result === undefined && audio.currentTime - latencySec() >= n.end) {
+    st.result = judgeNote(st.midis, n.midi, pitchTolerance, (n.end - n.start) / hopSec);
   }
+  return st.result;
 }
 
 // ---------- 畫面 ----------
@@ -299,9 +300,8 @@ function draw() {
   song.notes.forEach((n, i) => {
     const x0 = x(n.start), x1 = x(n.end);
     if (x1 < 0 || x0 > W) return;
-    const st = noteStats[i];
-    const done = n.end < now;
-    ctx.fillStyle = done && st.voiced ? (st.hit / st.voiced > 0.5 ? "#3ecf9a" : "#f0a35e") : "#4f7dd9";
+    const r = noteResult(i);
+    ctx.fillStyle = r ? (r.hit ? "#3ecf9a" : "#f0a35e") : "#4f7dd9";
     ctx.globalAlpha = 0.85;
     ctx.fillRect(x0, y(n.midi) - noteH / 2, x1 - x0, noteH);
   });
@@ -333,9 +333,10 @@ function draw() {
   $("next-lyric").textContent = next ? `接下來 ${next}` : "";
   $("next-lyric").hidden = !next;
   $("bar").style.width = `${(100 * now) / (audio.duration || song.duration || 1)}%`;
-  const v = noteStats.reduce((a, s) => a + s.voiced, 0);
-  const h = noteStats.reduce((a, s) => a + s.hit, 0);
-  $("live").textContent = `即時命中率 ${v ? Math.round((100 * h) / v) : 0}%`;
+  // 即時命中率 = 已判定的音符中命中幾個（和結果頁一樣以音符為單位）
+  const judged = song.notes.map((_, i) => noteResult(i)).filter((r) => r);
+  const hits = judged.filter((r) => r.hit).length;
+  $("live").textContent = `即時命中率 ${judged.length ? Math.round((100 * hits) / judged.length) : 0}%`;
 }
 
 function loop() {
