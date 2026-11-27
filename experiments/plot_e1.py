@@ -71,11 +71,6 @@ def paired_diff(
 
     某一段若其中一個方法是 NaN，這段整個不算（不算進平均，也不算進 n）。
     """
-    # TODO(#6)：照第 11 課的步驟寫
-    #   1. 只留 snr_db == snr 的列
-    #   2. pivot：index = 段名、columns = 方法、values = metric
-    #   3. 兩欄相減 → 每段一個差值，去掉 NaN
-    #   4. 算 mean、ci95、n、a_better、b_better，用 pd.Series({...}) 回傳
     s = df[df["snr_db"] == snr]
     p = s.pivot(index="clip", columns="method", values=metric)
     diff = (p[method_a] - p[method_b]).dropna()
