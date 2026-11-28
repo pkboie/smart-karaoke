@@ -4,8 +4,8 @@
 
 ## 目前在做
 
-- branch：`model/acapella-e4`（已同步至 `0dacf3a`）
-- 內容：已完成 #5 新版 `data/features/features_v2.csv`（132 筆、沿用原本 10 個特徵，不含 `offset_sec` 與 `key_shift`）與舊版 `features.csv` 的公平對照實驗，並確認 `tests/simulate_singing.py` 在新版模型下的行為與特徵偏差原因。
+- branch：`model/acapella-e4`（已同步至 `b43b1d9`）
+- 內容：已完成 #5 探索版高分代理參考資料集（`data/features/features_v3_experimental.csv`）的合併、LOSO／Ablation 比較、去參考歌手（$n=126$）對照、單變量相關性檢查，以及 `tests/simulate_singing.py` 行為驗證。
 
 ## 本週目標（對照 PROJECT_PLAN.md）
 
@@ -19,9 +19,9 @@
 - [x] 修正訓練欄位篩選，排除評分標籤造成的特徵洩漏
 - [x] 以修正後流程重跑 Overall 四組 feature ablation
 - [x] 無模型的規則式降級通過 `tests/simulate_singing.py`
-- [x] 合併 `features_v2.csv` 與 `labels.csv`（`data/features/all_v2.csv`），在相同模型設定下完成新舊 Features 四目標與 Ablation 比較
-- [x] 確認新版模型與規則式在 `tests/simulate_singing.py` 的分數行為（確認模型受 Singer 0 偏差影響尚不適合作為 Demo 評分器，Demo 維持規則式 fallback）
-- [ ] 待 #5 改用「非低分代理參考」（或正式 Demo 原曲／高分參考備案）後重跑 E4 並定稿，與全組自錄後微調 `make_tips()`
+- [x] 合併 `features_v2.csv` 與 `labels.csv`（`data/features/all_v2.csv`），完成 v1 vs. v2 比較並定位 Singer 0 低分偏差
+- [x] 合併 `features_v3_experimental.csv` 與 `labels.csv`（`data/features/all_v3_experimental.csv`），驗證高分代理參考下的特徵方向與模型行為
+- [ ] 待取得「無標籤洩漏」的正式參考特徵（例如原曲人聲參考）並解決 `expression.vibrato_cents`／`key_shift` 問題後重跑 E4 定稿；自錄後微調 `make_tips()`
 
 ## 已完成
 
@@ -33,45 +33,50 @@
 - 2026-11-24：將 `data/features/features.csv` 與 `labels.csv` 以 `song`、`singer_id` 一對一合併，共 132 筆；修正 `train.py` 僅選取 `pitch.*`、`rhythm.*`、`contour.*`、`expression.*` 欄位，排除標籤洩漏。v1 Overall Ridge LOSO Spearman $\rho=0.372$、MAE $=1.686$。
 - 2026-11-28：
   - 為 `scoring/train.py` 新增 `--prefix` 與 `--no-save-model` 選項（預設行為不變），保留 v1 實驗檔案並以 `v2_` 前綴輸出新版結果至 `experiments/results/e4_v2_*.csv` 與對應圖表。
-  - 將 `data/features/features_v2.csv` 與 `labels.csv` 以 `["song", "singer_id"]` 一對一合併為 `data/features/all_v2.csv`（132 筆、0 缺失值），並沿用原本 10 個特徵完成新舊版 LOSO 對照（見下方筆記「v1 vs. v2 模型比較結果」）。
-  - 完成 `v2` Overall 四組特徵消融（`--drop-group`）與「排除 `singer_id == 0`（$n=126$）」對照分析，確認目前正面 $\rho$ 主要來自「偏離低分 Singer 0」的反轉關聯，而非真正學會歌唱品質。
-  - 以 v2 模型執行 `python tests/simulate_singing.py`，確認分數排序倒置（正常唱 `31`、偏高半音 `33`、拖拍 350ms `39`、亂唱 `81`）；驗證規則式降級在現行程式下仍正常通過（正常唱 `95`、偏高半音 `55`、拖拍 350ms `71`、亂唱 `21`）。
+  - 完成 `features_v2.csv` 與 `labels.csv` 合併（`data/features/all_v2.csv`）及 v1 vs. v2 對照，定位出 `singer_id = 0`（`overall_performance` 平均僅 `2.125`）造成特徵與評分方向反轉、v2 模型在 `tests/simulate_singing.py` 給分倒置（正常唱 `31` < 亂唱 `81`）。
+  - 合併 #5 探索版高分代理參考 `features_v3_experimental.csv` 與 `labels.csv` 為 `data/features/all_v3_experimental.csv`，以 `--prefix v3_exp_` 完成四目標 LOSO、Ablation、去參考歌手（$n=126$）與單變量相關性驗證（見下方筆記「v1 vs. v2 vs. v3（探索版）比較」）。
+  - **關鍵改善**：v3 特徵與人評的相關方向全部轉為合理方向，Pitch-only baseline 由 v1 `0.039`／v2 `0.120` 提升至 **`0.243`**（去參考歌手後仍由 v2 `-0.004` 升為 **`+0.129`**）；在 `tests/simulate_singing.py` 中，v3 模型分數排序不再倒置（正常唱 `93` > 拖拍 350ms `75` > 亂唱 `60`）。
+  - **尚存問題**：(1) `v3_README.txt` 已明載此版以測試曲標籤選高分歌手當參考，有標籤洩漏、不可作為最終無偏 E4 成績；(2) `bd68932` 修改 `scoring/features.py` 套用 `key_shift` 補償後，整首「偏高半音」會被自動移調校正而不扣音準分（v3 模型：`93` 分；規則式 fallback 同樣由原本 `55` 變成 `95`、`亂唱` `18`）；(3) `expression.vibrato_cents` 與人評仍呈負相關（$-0.216$）。
 
 ## 卡住／需要別人
 
-- **需要 #5 確認 M2 參考旋律調整方向（關鍵發現）**：
-  - 檢查 `labels.csv` 發現，`singer_id = 0` 在 6 首歌的 `overall_performance` 僅 **`1.50`–`3.00`**（平均 `2.125`、`pitch` 僅 `1.50`–`2.00`）。
-  - 因為 `features.csv` 與 `features_v2.csv` 皆以 Singer 0 當代理參考旋律，造成高分歌手（`>= 9.0`）的特徵誤差反而比中低分歌手更大，使 `contour.interval_accuracy`（$\rho = -0.435$）、`contour.note_coverage`（$\rho = -0.442$）與評分呈負相關，`rhythm.median_abs_onset_ms`（$\rho = +0.346$）呈正相關。
-  - 此問題導致訓練出的模型在真實／合成唱段上給分倒置（亂唱分數最高），建議依 `PROJECT_PLAN.md` 11/29 檢查點討論是否改用原曲人聲參考或高分歌手備案（注意避免將當作參考的歌手放入訓練／評估）。
-- **需要 #4 知會整合狀態**：v2 模型因上述資料特徵問題仍未通過 `simulate_singing.py` 行為檢查；整合 Demo 時請維持規則式 fallback（本機不放 `models/*.joblib` 即可），不要將目前模型用於現場 Demo 給分。
+- **需要 #5 協助（接續 v3 實驗的下一步）**：
+  - 目前 v3 已驗證「高品質參考旋律＋`usr_aligned`／八度折疊修正」確實能讓所有音準／節奏／走向特徵方向轉正。但因 v3 選參考歌手時看過測試曲人類評分（即使拿掉該 6 筆參考歌手仍屬標籤洩漏），**正式 E4 仍需要無標籤洩漏的參考來源**（例如正式原曲分離人聲 `song2`／`song6` 或不看標籤的參考選擇）。
+  - `scoring/features.py` 套用 `key_shift` 後，整首偏高半音會被自動移調而不扣音準分（無論模型或規則式都可能受影響），需共同確認伴奏播放下的 Demo 是否應懲罰非預期移調，或僅在 Acapella 清唱比較時啟用移調補償。
+  - `expression.vibrato_cents`（標準差）仍會被走音晃動拉高（一般群平均 `107.4` vs. 參考歌手 `29.3`，與評分 $\rho=-0.216$），支持按 W3 計畫改為 4–8 Hz 顫音頻帶能量。
+- **需要 #4 知會整合狀態**：已清空本機測試產生的探索版 `models/*.joblib`；Demo 整合請維持無模型規則式 fallback，但需留意 `bd68932` 修改 `scoring/features.py` 對「整首偏高半音」的給分影響。
 - **等待全組自錄資料（預計 12/01–12/04）**：自錄 trace 收齊後，會依據各條件測試結果微調 `scorer.py` 中 `make_tips()` 的文字建議門檻與內容。
 
 ## 筆記
 
-### 1. v1 vs. v2 模型比較結果（132 筆，沿用原本 10 個特徵）
+### 1. v1 vs. v2 vs. v3（探索版，有參考選擇洩漏）模型比較（沿用 10 個特徵）
 
 | 目標 | 版本 | Pitch-only $\rho$ | Ridge $\rho$ (95% CI) | Ridge MAE | RF $\rho$ (95% CI) | RF MAE |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | `overall` | v1 | 0.039 | 0.372 [0.20, 0.53] | 1.686 | 0.283 [0.11, 0.46] | 1.735 |
-| `overall` | **v2** | **0.120** | **0.437** [0.28, 0.58] | **1.576** | **0.470** [0.31, 0.62] | **1.540** |
-| `pitch` | v1 | 0.062 | 0.362 [0.18, 0.52] | **1.646** | 0.315 [0.14, 0.48] | 1.684 |
-| `pitch` | **v2** | **0.089** | **0.398** [0.24, 0.55] | 1.689 | **0.430** [0.27, 0.58] | **1.660** |
+| `overall` | v2 | 0.120 | **0.437** [0.28, 0.58] | **1.576** | **0.470** [0.31, 0.62] | **1.540** |
+| `overall` | v3 (exp) | **0.243** | 0.318 [0.13, 0.48] | 1.593 | 0.442 [0.28, 0.59] | 1.561 |
+| `pitch` | v1 | 0.062 | 0.362 [0.18, 0.52] | 1.646 | 0.315 [0.14, 0.48] | 1.684 |
+| `pitch` | v2 | 0.089 | **0.398** [0.24, 0.55] | 1.689 | 0.430 [0.27, 0.58] | 1.660 |
+| `pitch` | v3 (exp) | **0.173** | 0.369 [0.18, 0.52] | **1.635** | **0.478** [0.32, 0.62] | **1.629** |
 | `rhythm` | v1 | 0.028 | 0.321 [0.13, 0.48] | 1.706 | 0.259 [0.09, 0.43] | 1.745 |
-| `rhythm` | **v2** | **0.070** | **0.410** [0.24, 0.56] | **1.689** | **0.442** [0.28, 0.59] | **1.609** |
-| `expression` | v1 | -0.045 | **0.399** [0.23, 0.55] | **1.807** | 0.310 [0.13, 0.47] | 1.819 |
-| `expression` | **v2** | **0.023** | 0.357 [0.20, 0.51] | 1.850 | **0.404** [0.24, 0.56] | **1.679** |
+| `rhythm` | v2 | 0.070 | **0.410** [0.24, 0.56] | 1.689 | 0.442 [0.28, 0.59] | 1.609 |
+| `rhythm` | v3 (exp) | **0.203** | 0.331 [0.15, 0.48] | **1.611** | **0.449** [0.29, 0.59] | **1.554** |
+| `expression` | v1 | -0.045 | **0.399** [0.23, 0.55] | 1.807 | 0.310 [0.13, 0.47] | 1.819 |
+| `expression` | v2 | 0.023 | 0.357 [0.20, 0.51] | 1.850 | **0.404** [0.24, 0.56] | **1.679** |
+| `expression` | v3 (exp) | **0.164** | 0.375 [0.20, 0.52] | **1.607** | 0.359 [0.18, 0.51] | 1.710 |
 
-Overall 特徵消融（Ridge / RF pooled $\rho$）：
-
-| 特徵組別 | v1 Ridge / RF | v2 Ridge / RF |
-| --- | --- | --- |
-| 完整 10 特徵 | 0.372 / 0.283 | 0.437 / 0.470 |
-| 去 `pitch` | 0.364 / 0.263 | 0.414 / 0.448 |
-| 去 `rhythm` | 0.375 / 0.336 | **0.453 / 0.523** |
-| 去 `contour` | 0.174 / 0.196 | 0.315 / 0.326 |
-| 去 `expression` | 0.366 / 0.252 | 0.438 / 0.459 |
-
-- **現象解讀**：v2 在數據指標（LOSO $\rho$ 與 MAE）整體優於 v1，但拿掉 `rhythm` 後表現反而最高（`0.453` / `0.523`），且排除 `singer_id == 0`（$n=126$）後 `overall` 的 Pitch-only $\rho$ 降至 `-0.004`、Ridge 降至 `0.378`。主要受限於 Singer 0（低分歌手）代理參考導致特徵方向與評分相反，相關證據已保留於 `experiments/results/e4_v2_*.csv` 供 E4 報告分析與後續特徵修正參考。
+- **去參考歌手對照（$n=126$）**：v3 排除 6 筆參考歌手後，`overall` Ridge $\rho = 0.212$、RF $\rho = 0.328$；`pitch` RF $\rho = 0.405$（`0.22`–`0.56`）；`rhythm` RF $\rho = 0.372$。雖然絕對 $\rho$ 因移除「偏離低分 Singer 0」的反轉假象而比 v2 低，但單變量方向全面轉正：
+  - `pitch.median_abs_cents`：v2 `+0.098` → v3 `-0.247`（去參考 `-0.136`）
+  - `pitch.hit_rate_50c`：v2 `-0.107` → v3 `+0.273`（去參考 `+0.165`）
+  - `rhythm.median_abs_onset_ms`：v2 `+0.346` → v3 `-0.350`（去參考 `-0.253`）
+  - `contour.interval_accuracy`：v2 `-0.435` → v3 `+0.425`（去參考 `+0.340`）
+  - `contour.note_coverage`：v2 `-0.442` → v3 `+0.407`（去參考 `+0.320`）
+- **v3 Overall Ablation（Ridge / RF pooled $\rho$）**：完整 `0.318 / 0.442`｜去 `pitch` `0.327 / 0.418`｜去 `rhythm` `0.359 / 0.426`｜去 `contour` `0.312 / 0.434`｜去 `expression` `0.346 / 0.385`（在 RF 上四組移除皆下降，且移除 `expression` 掉最多：`0.442 → 0.385`）。
+- **行為驗證（`tests/simulate_singing.py`）**：
+  - v1 模型：正常 `11`、偏高 `12`、拖拍 `31`、亂唱 `13`
+  - v2 模型：正常 `31`、偏高 `33`、拖拍 `39`、亂唱 `81`
+  - **v3 探索模型**：正常 `93`、偏高 `93`、拖拍 `75`、亂唱 `60`
 
 ### 2. Acapella `song1`–`song6` 對應歌名（給 #5 與選歌參考）
 - `song1`：但願人長久
@@ -93,5 +98,5 @@ Overall 特徵消融（Ridge / RF pooled $\rho$）：
 - **跨歌分布一致**：`song1` 到 `song6` 的中位數與四分位距（IQR）相當穩定，沒有單一歌曲給分特別鬆或特別嚴的偏差，適合進行 Leave-One-Song-Out（LOSO）交叉驗證。
 
 ### 5. 訓練與後端推論管線說明（給 #4 整合與 Demo 備案參考）
-- **多目標訓練指令**：`python scoring/train.py data/features/all_v2.csv --target <overall|pitch|rhythm|expression> --prefix v2_` 會自動對應欄位並輸出 `models/<target>.joblib`，同時將評估數據與散佈圖存至 `experiments/results/`。
+- **多目標訓練指令**：`python scoring/train.py data/features/all_v3_experimental.csv --target <overall|pitch|rhythm|expression> --prefix v3_exp_` 會自動對應欄位並輸出 `models/<target>.joblib`，同時將評估數據與散佈圖存至 `experiments/results/`。
 - **後端自動降級機制**：`scorer.py` 會個別檢查 `models/overall.joblib`、`pitch.joblib`、`rhythm.joblib`、`expression.joblib` 是否存在；存在的面向用模型預測，不存在的面向（包含無標籤的 `contour`）自動維持規則式給分，Demo 時若需退回純規則式只需清空 `models/` 即可。
