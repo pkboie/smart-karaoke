@@ -299,7 +299,7 @@ canvas {
   font-family: var(--poster-serif);
 }
 
-.scores div,
+.scores > div,
 .note-results li {
   border-color: var(--poster-line);
   background: var(--poster-stage);
@@ -311,6 +311,17 @@ canvas {
 }
 
 .scores .score-overall b {
+  color: var(--poster-gold-light);
+}
+
+.score-radar {
+  --radar-grid: rgb(207 223 212 / 33%);
+  --radar-fill: rgb(146 192 180 / 45%);
+  --radar-outline: #c5e0d1;
+  --radar-marker: var(--poster-gold);
+}
+
+.score-radar b {
   color: var(--poster-gold-light);
 }
 
