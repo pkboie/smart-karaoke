@@ -131,7 +131,7 @@ def main():
             for singer_id, y, sr in read_arrow_audio(arrow_path):
 
                 frames = audio_to_frames(y, sr, args.method)
-                feats = extract_features(song, frames)
+                feats = extract_features(song, frames, apply_key_shift=True)
 
                 rows.append({
                     "song": args.song,
@@ -155,7 +155,7 @@ def main():
 
         for wav in wav_files:
             frames = wav_to_frames(wav, args.method)
-            feats = extract_features(song, frames)
+            feats = extract_features(song, frames, apply_key_shift=True)
 
             rows.append({
                 "file": wav.name,
