@@ -314,30 +314,29 @@ def extract_features(song, frames, offset_ms=0.0):
         a = int(round(note["start"] / DTW_HOP))
         b = max(a + 1, int(round(note["end"] / DTW_HOP)))
         js = sorted({j for i in range(a, min(b, n)) for j in ref_to_usr.get(i, [])})
-        sung = [usr[j] for j in js if not np.isnan(usr[j])]
+        # Use the global shift estimated above, then fold octave errors
+        # separately for each voiced frame BEFORE aggregating.
+        voiced_js = [j for j in js if np.isfinite(usr_aligned[j])]
+        sung = np.asarray([usr_aligned[j] for j in voiced_js], dtype=float)
         coverage = len(sung) / max(1, b - a)
-        if sung:
-            # Fold octave errors per frame before aggregating.
-            # This prevents mixed-octave detections from producing
-            # a median pitch between the two octave clusters.
+        if len(sung):
             target_midi = float(note["midi"])
-            frame_errors = np.asarray(
-                fold_cents(np.asarray(sung, dtype=float) - target_midi),
-                dtype=float,
-            )
+            frame_errors = np.asarray(fold_cents(sung - target_midi), dtype=float)
             cents = float(np.median(frame_errors))
-            # Octave-normalized sung MIDI for downstream contour features.
+            # Measure absolute frame errors before taking the median:
+            # opposite-sign pitch errors must not cancel each other.
+            abs_cents = float(np.median(np.abs(frame_errors)))
             sung_med = target_midi + cents / 100.0
-            voiced_js = [j for j in js if not np.isnan(usr[j])]
             onset_ms = (voiced_js[0] - a) * DTW_HOP * 1000.0
         else:
-            sung_med, cents, onset_ms = None, None, None
+            sung_med, cents, abs_cents, onset_ms = None, None, None, None
         per_note.append({"index": idx, "lyric": note.get("lyric", ""), "start": note["start"],
                          "target_midi": note["midi"], "sung_midi": sung_med,
-                         "cent_error": cents, "onset_ms": onset_ms, "coverage": coverage})
+                         "cent_error": cents, "abs_cent_error": abs_cents,
+                         "onset_ms": onset_ms, "coverage": coverage})
 
-    sung_notes = [p for p in per_note if p["cent_error"] is not None and p["coverage"] >= 0.3]
-    cents = np.array([abs(p["cent_error"]) for p in sung_notes]) if sung_notes else np.array([600.0])
+    sung_notes = [p for p in per_note if p["abs_cent_error"] is not None and p["coverage"] >= 0.3]
+    cents = np.array([p["abs_cent_error"] for p in sung_notes]) if sung_notes else np.array([600.0])
     onsets = np.array([p["onset_ms"] for p in sung_notes]) if sung_notes else np.array([1000.0])
 
     # 旋律走向：相鄰兩個音的音程（保留既有計算方式）
@@ -348,7 +347,7 @@ def extract_features(song, frames, offset_ms=0.0):
             continue
         ref_iv = q["target_midi"] - p["target_midi"]
         usr_iv = q["sung_midi"] - p["sung_midi"]
-        interval_err.append(abs(usr_iv - ref_iv))
+        interval_err.append(float(abs(fold_cents(usr_iv - ref_iv)) / 100.0))
     interval_err = np.array(interval_err) if interval_err else np.array([12.0])
 
     # 表現力：長音顫音幅度、音量起伏（保留既有計算方式）
