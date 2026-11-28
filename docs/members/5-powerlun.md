@@ -6,13 +6,12 @@
 
 ## 目前在做
 
-- Branch：請以本次提交前的 `git branch --show-current` 為準（歷史 W2 開發分支：`feature/w2-offline-features-v2`）
+- Branch：`experiment/reference-singer-comparison`（Key Shift 修復待提交／PR 合併；以 GitHub 最新狀態為準）
 - 目前重點：
-  - 完成 W2 新版 Features 的 GitHub 提交及與 #3 的交接。
-  - 協助 #3 比較新版與舊版 Features 的模型表現。
-  - 持續改善正式 Demo 的參考音高與歌詞時間對齊。
-  - song6 已有前 60 秒含歌詞 v1；song2 已在 localhost 測試約 105 秒的音符／歌詞候選版本。
-  - 準備兩首 Demo 的 JSON 交付、音檔雲端分享與跨環境驗收。
+  - 已產生 `features_v3_experimental.csv`（132 筆，最高分 Singer 參考，含八度與 Key Shift 處理），#3 已完成探索性訓練比較。
+  - 修復共用 `extract_features()` 對固定伴奏 Demo 的 Key Shift 副作用，待提交／合併修正。
+  - 待建立**不利用測試歌曲標籤**的正式參考來源，才能提供無標籤洩漏的 E4 評估。
+  - 兩首正式 Demo 的音檔與 JSON 已合併至 `master`，但 E1 人工 Pitch Ground Truth 尚待完成。
 
 ## 本週目標（對照 PROJECT_PLAN.md）
 
@@ -27,11 +26,14 @@
 - [x] 產生新版 `features_v2.csv`，共 132 筆資料。
 - [x] 完成新版 Features 的基本資料品質檢查。
 - [x] 將 Acapella song6 參考旋律與正式 Karaoke Demo 分離。
-- [ ] 完成新版 Features 的模型效果驗證（與 #3 合作）。
-- [x] 將 song6 的歌詞與音符候選版本延伸至前 60 秒，並完成 localhost 顯示測試。
-- [x] 建立第二首 Demo song2《我只在乎你》的音訊分離、MIDI 與歌詞候選版本，並在 localhost 測試約 105 秒。
-- [ ] 完成兩首 Demo 的人工音高、逐字節拍校正及跨環境驗收。
-- [ ] 完成兩首 Demo 資料的正式分享與交付。
+- [x] 與 #3 完成 v1／v2 及探索性 v3 的初步模型比較（v3 不可用於無洩漏 E4 成績）。
+- [x] 六首歌 Singer 0 與高分 Singer 參考對照診斷。
+- [x] 產生 `features_v3_experimental.csv`（132 筆，實驗用途）。
+- [x] 模擬測試確認固定伴奏 Demo 關閉 Key Shift 後，偏高半音恢復扣分。
+- [ ] 將 Demo／離線 Key Shift 分流修正合併至 `master`。
+- [ ] 建立標籤獨立的正式 Features 參考方案並重跑無洩漏評估。
+- [ ] 完成正式 song6 的完整歌詞與參考音高校正。
+- [x] 完成第二首正式 Demo song2 的初步版本，音檔及 JSON 已合併至 `master`（仍待音高校正）。
 
 ## 已完成
 
@@ -135,40 +137,60 @@
 
 新版的移調估計偏保守，132 筆資料中有 127 筆 `key_shift = 0`，因此目前不將該欄位視為已驗證的可靠移調標籤。
 
-### 2026-11-28：Two Demo Songs — Lyrics & Localhost Integration
+### 2026-11-28：Reference Singer 診斷、Features v3 與 Demo Key Shift 修復
 
-#### song6《月亮代表我的心》
+#### 1. Singer 0 參考偏差診斷
 
-- 將原先前 35 秒的歌詞初稿延伸至前 60 秒，更新 `data/songs/song6/song.json` 與 `lyrics_timing.json`。
-- 依人工聽辨提供的句子時間修正 36～60 秒歌詞段落；最後一句確認於 55～60 秒。
-- 結構測試：完整 `song.json` 共 363 個音符；前 60 秒 117 個音符；9 段歌詞時間資訊；音符與歌詞基本格式檢查通過。
-- localhost 已確認可顯示前 60 秒歌詞與音高線。
-- **限制**：歌詞字級／節拍對齊仍有偏差；pYIN 偵測的 MIDI 尚未取得完整人工 Ground Truth，不能聲稱音高準確度已驗收。
+- 使用 `offline/compare_reference_singers.py` 比較六首歌的 Singer 0 與各首**最高分 Singer**；每首比較時排除兩名參考者，因此每首對照 20 位歌手。
+- 新參考：song1=7、song2=7、song3=15、song4=20、song5=7、song6=15。
+- 六首 Spearman ρ 的**逐首算術平均**如下（不是合併樣本的 ρ）：
 
-#### song2《我只在乎你》
+| 特徵 | Singer 0 | 高分 Singer | 預期方向 |
+|---|---:|---:|---|
+| `pitch.median_abs_cents` | -0.094 | -0.010 | 負 |
+| `pitch.hit_rate_100c` | +0.020 | +0.022 | 正 |
+| `contour.interval_accuracy` | -0.237 | +0.394 | 正 |
+| `contour.note_coverage` | -0.303 | +0.461 | 正 |
+| `rhythm.median_abs_onset_ms` | +0.160 | -0.357 | 負 |
 
-- 新增第二首正式 Demo，使用 Demucs 由 `source.mp3` 分離 `vocals.wav`、`accompaniment.wav`。
-- 以 pYIN 先建立前 60 秒 MIDI 初稿（91 個音符），再運用專案現有的 `scoring.pitch_utils` 將後段延伸至約 106 秒。
-- 依人工聽辨記錄 33～105 秒共 17 段歌詞時間，儲存於 `data/songs/song2/lyrics_timing.json`，並產生 `song.json` 的逐音符歌詞候選標記。
-- 已於 localhost 檢視延伸後的音符、歌詞與播放效果；目前可視為**可展示的候選 v1**。
-- 特別保留舊有 Acapella song2 參考檔備份，避免與正式 Demo 的 `song.json` 混用。
-- **限制**：音高、音符切割與逐字對齊仍是自動結果／粗略人工句級時間，尚未完成標準答案驗證。
+- Contour／Rhythm 的相關方向在六首歌都變得合理，但 Pitch 未明顯改善；此對照屬**探索性診斷**，不是正式模型評估。
 
-#### Git 交付規劃
+#### 2. Features v3（已產生並供 #3 實驗）
 
-- 本次優先提交 song2、song6 的 `song.json`、`lyrics_timing.json` 以及此進度文件。
-- 原曲 MP3、大型 WAV 與本地備份暫不新增至 Git；依團隊規劃以雲端硬碟分享音訊。
-- 用 `git status --short`、`git diff --cached --stat` 審核實際提交內容，避免把診斷腳本、暫存資料或其他分支修正混入。
-- 兩首 Demo 的 JSON 需在其他組員環境驗證與音訊匹配後，才能視為正式交付完成。
+- 產出：`data/features/features_v3_experimental.csv`，共六首 × 22 位 = **132 筆不重複 `(song, singer_id)`**。
+- 產生器：`offline/build_features_v3_experimental.py`；參考選擇紀錄：`data/features/reference_experiments/v3_reference_selection.csv`；限制說明：`data/features/reference_experiments/v3_README.txt`。
+- 使用最高分 Singer 當代理參考，修正逐影格八度折算與每音符的整體移調處理。
+- **關鍵限制（請 #3 注意）：** 最高分 Singer 是藉由本首歌 `labels.csv` 選出的，正式 LOSO 的測試歌曲標籤因而參與特徵建構，存在 **Label Leakage**。即使排除六筆參考歌手自身資料，仍不能宣稱無洩漏。**v3 只能作為診斷性／探索性 E4 實驗，不得作為最終無洩漏 LOSO 成績。**
+- #3 回報 v3 模型在模擬情境有正常唱 93 ＞ 拖拍 75 ＞ 亂唱 60 的改善；但這不代表模型已通過正式評估，且 `expression.vibrato_cents` 與人工評分仍呈負相關（約 -0.216），待改善顫音特徵定義。
+
+#### 3. 修復 PR #28 對 Demo 的 Key Shift 副作用
+
+- 問題：原本為 Acapella 特徵加入 `usr_aligned` 的補償後，共用 `extract_features()` 讓**固定伴奏** Demo 的「整首偏高半音」也被補償掉，模擬分數一度變成 95（與正常唱相同），而前端即時判斷並未使用相同補償。
+- 修法：`scoring/features.py` 新增 `apply_key_shift=False`（預設關閉）；離線路徑 `scoring/extract_dataset.py` 和 `offline/build_features_v3_experimental.py` 明確使用 `apply_key_shift=True`。Demo 的 `backend/app.py` 維持預設 `False`。
+- **本機已實測** `python tests/simulate_singing.py`：
+
+| 情境 | 總分 | 音準分 |
+|---|---:|---:|
+| 正常唱 | 95 | 100 |
+| 偏高半音 | 51 | 0 |
+| 拖拍 350ms | 71 | 100 |
+| 亂唱 | 18 | 4 |
+
+- 因此 Demo 規則式評分的半音偏移懲罰在**本機模擬測試**已恢復；仍需 PR 合併及跨機驗收。**未因這次分流修復重生 v3 CSV**：v3 原先就有啟用 Key Shift，當前修改是把兩種呼叫場景明確分離。
+
+#### 4. 正式 Demo 交付現況
+
+- `data/songs/song6/`：《月亮代表我的心》，前 60 秒歌詞／音高已有展示候選。
+- `data/songs/song2/`：《我只在乎你》，約 105 秒歌詞／音高候選；`song.json`、`lyrics_timing.json`、`vocals.wav`、`accompaniment.wav` 已合併到 `master`。
+- 兩首仍以自動 pYIN 產生的參考音高為主，**尚不是 E1 要求的獨立人工音高校正 Ground Truth**。
 
 ## 卡住／需要別人
 
-- 需要 #3 協助比較 `features.csv` 與 `features_v2.csv` 在相同模型設定下的訓練與測試結果。
-- 目前仍使用 Singer 0 作為代理參考旋律，可能造成自我參考偏差。
-- 時間對齊與移調估計尚未使用人工標註的標準答案進行驗證。
-- 歌唱人聲的 Whisper 辨識仍有漏字、錯字與時間錯位問題。
-- song6、song2 的 pYIN 音符及歌詞時間仍需進一步人工校正；目前兩首均僅是候選 v1。
-- 正式 Demo 仍需要其他組員協助進行跨環境整合測試，並確認兩首音檔的雲端分享方式。
+- **#3：** 現有 v3 僅可用於探索性模型分析；正式 E4 需要獨立於測試歌曲 Labels 的參考旋律及重新評估，不能把 v3 的 LOSO 當最終成績。
+- **#4／整合：** 待 Key Shift 分流修正合併 `master` 後，在其他設備確認固定伴奏 Demo 的半音偏移仍會扣分；正式展示暫沿用經測試的規則式評分。
+- **#5：** 評估原唱人聲參考的歌曲版本相容性，或設計其他不依賴測試標籤的參考選擇流程，再產生後續正式 Features。
+- **E1：** song2、song6 需完成各 30～60 秒的獨立人工音高標註；自動 pYIN 候選不能直接作 Ground Truth。
+- **特徵改進：** `expression.vibrato_cents` 仍可能將不穩定音高抖動當成顫音；後續考慮 4–8 Hz 頻帶能量與穩定有聲區間限制。
 
 ## 筆記
 
@@ -238,7 +260,7 @@ Expression 訓練目標：
 python offline/align_lyrics.py
 ```
 
-目前正式 song6 全曲約 205 秒，前 60 秒已有歌詞初步對齊；song2 全曲約 261 秒，約前 105 秒已有音高與歌詞候選資料。兩首皆尚未完成音高與逐字節拍人工驗證。
+目前正式 song6 約 205 秒，前 60 秒已加入初步對齊歌詞；完整人工音高校正仍未完成。
 
 ### 4. Acapella 與正式 Demo 的區別
 
@@ -252,6 +274,6 @@ python offline/align_lyrics.py
 - 代理參考旋律可能造成 Singer 0 的自我參考偏差。
 - 不同歌手可能演唱不同長度的片段，部分時間對齊結果仍可能不可靠。
 - 目前移調估計偏保守，尚未確認能穩定辨識真正的升降 Key。
-- 使用評分標籤挑選高分參考歌手可能造成標籤洩漏，因此尚未採用於正式 Features。
-- 下一步由 #3 進行新舊 Features 模型比較，並視結果決定是否採用新版。
-- 持續改善兩首正式 Demo 的參考音高、歌詞時間對齊，完成雲端檔案分享與跨環境測試。
+- 實驗性 v3 使用評分標籤挑選高分參考歌手，已明確標示 Label Leakage，**不得作為正式無洩漏 E4 結果**。
+- #3 已完成探索性 v3 比較；接下來應以無標籤洩漏的參考來源重做正式 E4 評估。
+- 持續改善正式 Demo 的參考音高、歌詞時間對齊與 E1 人工標註。

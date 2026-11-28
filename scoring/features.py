@@ -278,7 +278,7 @@ def estimate_key_shift(ref, usr, max_shift=12, max_lag=30):
 
 # ---------- 3 & 4. 特徵 ----------
 
-def extract_features(song, frames, offset_ms=0.0):
+def extract_features(song, frames, offset_ms=0.0, apply_key_shift=False):
     notes = song["notes"]
     duration = song.get("duration") or (notes[-1]["end"] + 2.0)
 
@@ -302,6 +302,9 @@ def extract_features(song, frames, offset_ms=0.0):
     key_shift, shift_error = estimate_key_shift(ref, usr)
     if shift_error > 2.0:
         key_shift = 0
+    if not apply_key_shift:
+        key_shift = 0
+
     usr_aligned = usr - key_shift
     path = banded_dtw(ref, usr_aligned, band)
 

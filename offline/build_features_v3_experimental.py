@@ -158,7 +158,7 @@ def build_one_song(song_id, code_hash, force=False):
     for i, sid in enumerate(sorted(records), 1):
         print(f'  [{song_id}] {i}/22 singer {sid}: extracting ...', flush=True)
         frames = audio_to_frames(records[sid]['audio'], records[sid]['sr'], 'pyin')
-        values = flatten(extract_features(reference, frames))
+        values = flatten(extract_features(reference, frames, apply_key_shift=True))
         row = {'song': song_id, 'singer_id': sid, **values}
         rows.append(row)
     df = pd.DataFrame(rows).sort_values('singer_id')
