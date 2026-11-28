@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>評分結果 · Smart Karaoke</title>
-<link rel="stylesheet" href="style.css?v=8">
-<link rel="stylesheet" href="poster.css?v=1">
+<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="poster.css?v=3">
 </head>
 <body>
 <header>
@@ -21,11 +21,18 @@
       <a id="retry" class="action-link" href="./">再唱一次</a>
     </div>
     <div class="scores">
-      <div class="score-overall"><span>總分</span><b id="s-overall">-</b><meter id="m-overall" min="0" max="100" value="0" aria-label="總分"></meter></div>
-      <div><span>音準</span><b id="s-pitch">-</b><meter id="m-pitch" min="0" max="100" value="0" aria-label="音準"></meter></div>
-      <div><span>節奏</span><b id="s-rhythm">-</b><meter id="m-rhythm" min="0" max="100" value="0" aria-label="節奏"></meter></div>
-      <div><span>旋律走向</span><b id="s-contour">-</b><meter id="m-contour" min="0" max="100" value="0" aria-label="旋律走向"></meter></div>
-      <div><span>表現力</span><b id="s-expression">-</b><meter id="m-expression" min="0" max="100" value="0" aria-label="表現力"></meter></div>
+      <div class="score-overall">
+        <span>總分</span>
+        <b id="s-overall">-</b>
+        <meter id="m-overall" min="0" max="100" value="0" aria-label="總分"></meter>
+      </div>
+      <div class="score-radar" role="group" aria-label="各面向分數">
+        <div class="radar-axis radar-pitch"><span>音準</span><b id="s-pitch">-</b></div>
+        <div class="radar-axis radar-rhythm"><span>節奏</span><b id="s-rhythm">-</b></div>
+        <div class="radar-axis radar-contour"><span>旋律走向</span><b id="s-contour">-</b></div>
+        <div class="radar-axis radar-expression"><span>表現力</span><b id="s-expression">-</b></div>
+        <canvas id="score-radar" width="480" height="480" aria-hidden="true"></canvas>
+      </div>
     </div>
     <h3>演唱建議</h3>
     <ul id="tips"></ul>
@@ -37,6 +44,6 @@
   </section>
 </main>
 
-<script type="module" src="result.js?v=8"></script>
+<script type="module" src="result.js?v=9"></script>
 </body>
 </html>
