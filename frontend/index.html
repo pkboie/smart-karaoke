@@ -3,61 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Smart Karaoke</title>
-<link rel="stylesheet" href="style.css?v=4">
+<title>選歌 · Smart Karaoke</title>
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 <header>
-  <h1>Smart Karaoke</h1>
-  <div class="controls">
-    <label>歌曲 <select id="song" disabled><option>載入中…</option></select></label>
-    <fieldset id="difficulty" class="difficulty">
-      <legend>難度</legend>
-      <label><input type="radio" name="difficulty" value="100" checked><span>簡單 <small>±100 cent</small></span></label>
-      <label><input type="radio" name="difficulty" value="50"><span>困難 <small>±50 cent</small></span></label>
-    </fieldset>
-    <label>延遲補償 <input id="latency" type="number" value="0" step="1" min="0" max="1000"> ms</label>
-    <button id="calibrate-latency" type="button">延遲校正（喇叭測試）</button>
-    <small id="latency-status" role="status">聲學回錄為粗估；耳機配置需另外驗證。</small>
-    <label>演唱標籤（選填） <input id="trace-label" type="text" size="15" placeholder="例如 小明_偏高"></label>
-    <button id="start" disabled>開始唱</button>
-    <button id="stop" disabled>結束</button>
-  </div>
+  <span class="brand">Smart Karaoke</span>
 </header>
 
-<main>
-  <div class="status">
-    <div class="lyrics">
-      <span id="lyric">—</span>
-      <span id="next-lyric" hidden></span>
-    </div>
-    <span id="live">即時命中率 0%</span>
-  </div>
-  <canvas id="canvas" width="1200" height="360"></canvas>
-  <div class="progress"><div id="bar"></div></div>
-  <p id="msg" role="status"></p>
-  <p class="hint">請戴耳機，避免麥克風收到伴奏。第一次使用時瀏覽器會詢問麥克風權限。</p>
-
-  <section id="result" hidden>
-    <h2 id="result-heading" tabindex="-1">評分結果</h2>
-    <div class="scores">
-      <div class="score-overall"><span>總分</span><b id="s-overall">-</b><meter id="m-overall" min="0" max="100" value="0" aria-label="總分"></meter></div>
-      <div><span>音準</span><b id="s-pitch">-</b><meter id="m-pitch" min="0" max="100" value="0" aria-label="音準"></meter></div>
-      <div><span>節奏</span><b id="s-rhythm">-</b><meter id="m-rhythm" min="0" max="100" value="0" aria-label="節奏"></meter></div>
-      <div><span>旋律走向</span><b id="s-contour">-</b><meter id="m-contour" min="0" max="100" value="0" aria-label="旋律走向"></meter></div>
-      <div><span>表現力</span><b id="s-expression">-</b><meter id="m-expression" min="0" max="100" value="0" aria-label="表現力"></meter></div>
-    </div>
-    <h3>演唱建議</h3>
-    <ul id="tips"></ul>
-    <div id="note-summary" hidden>
-      <h3>逐音符音準</h3>
-      <p id="note-counts" class="hint"></p>
-      <ol id="note-results" class="note-results"></ol>
-    </div>
-  </section>
+<main class="page-width">
+  <h1 class="page-heading">選歌</h1>
+  <p id="msg" role="status">正在載入歌曲…</p>
+  <ul id="song-list" class="song-list"></ul>
 </main>
 
-<audio id="audio" preload="auto"></audio>
-<script type="module" src="main.js?v=6"></script>
+<script type="module" src="song-list.js?v=8"></script>
 </body>
 </html>

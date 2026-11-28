@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>評分結果 · Smart Karaoke</title>
+<link rel="stylesheet" href="style.css?v=8">
+</head>
+<body>
+<header>
+  <span class="brand">Smart Karaoke</span>
+</header>
+
+<main class="page-width">
+  <h1 class="page-heading">評分結果</h1>
+  <p id="result-status" role="status" hidden>目前沒有演唱結果。<a class="text-link" href="./">返回選歌</a></p>
+  <section id="result" hidden aria-labelledby="result-song">
+    <div class="result-header">
+      <h2 id="result-song"></h2>
+      <a id="retry" class="action-link" href="./">再唱一次</a>
+    </div>
+    <div class="scores">
+      <div class="score-overall"><span>總分</span><b id="s-overall">-</b><meter id="m-overall" min="0" max="100" value="0" aria-label="總分"></meter></div>
+      <div><span>音準</span><b id="s-pitch">-</b><meter id="m-pitch" min="0" max="100" value="0" aria-label="音準"></meter></div>
+      <div><span>節奏</span><b id="s-rhythm">-</b><meter id="m-rhythm" min="0" max="100" value="0" aria-label="節奏"></meter></div>
+      <div><span>旋律走向</span><b id="s-contour">-</b><meter id="m-contour" min="0" max="100" value="0" aria-label="旋律走向"></meter></div>
+      <div><span>表現力</span><b id="s-expression">-</b><meter id="m-expression" min="0" max="100" value="0" aria-label="表現力"></meter></div>
+    </div>
+    <h3>演唱建議</h3>
+    <ul id="tips"></ul>
+    <div id="note-summary" hidden>
+      <h3>逐音符音準</h3>
+      <p id="note-counts" class="hint"></p>
+      <ol id="note-results" class="note-results"></ol>
+    </div>
+  </section>
+</main>
+
+<script type="module" src="result.js?v=8"></script>
+</body>
+</html>
