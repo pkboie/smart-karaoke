@@ -16,7 +16,9 @@
       <label><input type="radio" name="difficulty" value="100" checked><span>簡單 <small>±100 cent</small></span></label>
       <label><input type="radio" name="difficulty" value="50"><span>困難 <small>±50 cent</small></span></label>
     </fieldset>
-    <label>延遲補償 <input id="latency" type="number" value="0" step="10"> ms</label>
+    <label>延遲補償 <input id="latency" type="number" value="0" step="1" min="0" max="1000"> ms</label>
+    <button id="calibrate-latency" type="button">延遲校正（喇叭測試）</button>
+    <small id="latency-status" role="status">聲學回錄為粗估；耳機配置需另外驗證。</small>
     <label>演唱標籤（選填） <input id="trace-label" type="text" size="15" placeholder="例如 小明_偏高"></label>
     <button id="start" disabled>開始唱</button>
     <button id="stop" disabled>結束</button>
@@ -56,6 +58,6 @@
 </main>
 
 <audio id="audio" preload="auto"></audio>
-<script type="module" src="main.js?v=5"></script>
+<script type="module" src="main.js?v=6"></script>
 </body>
 </html>
