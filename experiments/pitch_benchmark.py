@@ -26,6 +26,9 @@ import random
 import subprocess
 import sys
 import time
+import psutil
+import threading
+import tracemalloc
 from pathlib import Path
 
 import numpy as np
@@ -164,6 +167,55 @@ def mix(vocals, acc, snr):
     return vocals + gain * acc
 
 
+# ---------- E2 記憶體量測（僅 --profile-memory 時啟用） ----------
+def measure_peak_memory(run_detector):
+    """執行偵測時定期量測 Python + 子程序 RSS，以及 Python allocations 的峰值。
+
+    peak_rss_mb: 所有觀測到的程序 RSS 相加之取樣峰值（包含 Python 基礎用量）。
+    python_alloc_peak_mb: tracemalloc 的 Python allocations 峰值，不含 NumPy/native/Node 分配。
+    取樣間隔 5 ms；很短的子程序或尖峰仍可能漏掉。
+    """
+    process = psutil.Process()
+    stop_event = threading.Event()
+    ready_event = threading.Event()
+    peak_rss = 0
+
+    def sample_rss():
+        nonlocal peak_rss
+        try:
+            processes = [process] + process.children(recursive=True)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            processes = [process]
+        total_rss = 0
+        for p in processes:
+            try:
+                total_rss += p.memory_info().rss
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                pass
+        peak_rss = max(peak_rss, total_rss)
+
+    def monitor():
+        sample_rss()  # 確保即使演算法很快，也有基準值
+        ready_event.set()
+        while not stop_event.wait(0.005):
+            sample_rss()
+
+    thread = threading.Thread(target=monitor, daemon=True)
+    thread.start()
+    ready_event.wait()
+    tracemalloc.start()
+    try:
+        result = run_detector()
+        _, python_peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+        stop_event.set()
+        thread.join()
+        sample_rss()
+
+    return result, peak_rss / (1024 ** 2), python_peak / (1024 ** 2)
+
+
 # ---------- 主程式 ----------
 def main():
     ap = argparse.ArgumentParser()
@@ -173,6 +225,8 @@ def main():
         "--limit", type=int, default=10, help="MIR-1K 抽幾段（0 = 全部 1000 段）"
     )
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--profile-memory", action="store_true",
+                    help="E2：記錄 Python+子程序 peak RSS 和 tracemalloc 記憶體")
     ap.add_argument("--methods", nargs="+", default=["yin", "pyin"],
                     help="yin、pyin、crepe（需 torchcrepe）、pitchy（需 node）")
     ap.add_argument(
@@ -201,22 +255,32 @@ def main():
         for method in args.methods:
             for snr in snrs:
                 y = mix(vocals, acc, snr)
-                t0 = time.perf_counter()
+                # 同一份偵測程式可選擇是否開啟記憶體 profiling。
+                # pitchy 的 Node 子程序也會在 RSS 取樣範圍內。
                 if method == "pitchy":
-                    f0 = detect_pitchy(y, sr)
+                    run_detector = lambda: detect_pitchy(y, sr)
                 else:
-                    _, f0, _, _ = detect_pitch(y, sr, method=method)
+                    run_detector = lambda: detect_pitch(y, sr, method=method)[1]
+
+                t0 = time.perf_counter()
+                if args.profile_memory:
+                    f0, peak_rss_mb, python_alloc_peak_mb = measure_peak_memory(run_detector)
+                else:
+                    f0 = run_detector()
                 ms_per_sec = (time.perf_counter() - t0) * 1000 / (len(y) / sr)
                 m = compare_to_reference(ref, sample_at(times, f0))
-                rows.append(
-                    {
-                        "clip": name,
-                        "method": method,
-                        "snr_db": "clean" if snr is None else f"{snr:g}",
-                        "ms_per_sec": round(ms_per_sec, 2),
-                        **{k: round(float(v), 4) for k, v in m.items()},
-                    }
-                )
+
+                row = {
+                    "clip": name,
+                    "method": method,
+                    "snr_db": "clean" if snr is None else f"{snr:g}",
+                    "ms_per_sec": round(ms_per_sec, 2),
+                }
+                if args.profile_memory:
+                    row["peak_rss_mb"] = round(peak_rss_mb, 2)
+                    row["python_alloc_peak_mb"] = round(python_alloc_peak_mb, 2)
+                row.update({k: round(float(v), 4) for k, v in m.items()})
+                rows.append(row)
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.open("w", newline="", encoding="utf-8") as f:

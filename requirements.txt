@@ -7,6 +7,7 @@ uvicorn
 pandas
 scikit-learn
 joblib
+psutil
 # 選用：
 # demucs        # 原曲分離人聲與伴奏（offline/make_song.py）
 # xgboost       # scoring/train.py 會自動加入 XGBoost
