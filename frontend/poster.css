@@ -1,0 +1,395 @@
+:root {
+  --poster-paper: #425457;
+  --poster-panel: rgb(31 46 48 / 29%);
+  --poster-inset: #33474a;
+  --poster-stage: #2d3f43;
+  --poster-gold: #eed6a1;
+  --poster-gold-light: #f7e7be;
+  --poster-line: rgb(218 226 213 / 32%);
+  --poster-edge: 11px 14px 10px 14px / 13px 10px 14px 11px;
+  --poster-serif: Georgia, "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  --poster-header-width: 920px;
+  --ink: #f2f0e6;
+  --muted: #c5d0c6;
+  --target: var(--poster-gold);
+  --hit: #a8cbb5;
+  --miss: #f2c08d;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 72% 16%, rgb(231 196 121 / 17%), transparent 39%),
+    radial-gradient(ellipse at 14% 67%, rgb(169 189 178 / 9%), transparent 42%),
+    linear-gradient(155deg, #4d5e62, var(--poster-paper) 55%, #35464a);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse at 25% 32%, rgb(244 237 214 / 9%) 0.45px, transparent 1.2px),
+    radial-gradient(ellipse at 72% 67%, rgb(17 29 29 / 13%) 0.5px, transparent 1.2px),
+    radial-gradient(ellipse at 43% 81%, rgb(228 232 214 / 6%) 0.6px, transparent 1.6px);
+  background-size: 4px 7px, 7px 9px, 11px 13px;
+  opacity: 0.32;
+}
+
+header {
+  position: relative;
+  padding: 19px max(20px, calc((100% - var(--poster-header-width)) / 2));
+  border-bottom: 1px solid rgb(218 226 213 / 22%);
+  background: rgb(29 42 43 / 14%);
+}
+
+.brand {
+  font-family: var(--poster-serif);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+main {
+  position: relative;
+  isolation: isolate;
+}
+
+.page-width {
+  padding-block: clamp(48px, 8vw, 94px) clamp(56px, 9vw, 112px);
+}
+
+main::before,
+main::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  height: clamp(28px, 8vw, 75px);
+  pointer-events: none;
+  border-top: 1px solid var(--poster-line);
+}
+
+main::before {
+  top: clamp(32px, 7vw, 74px);
+  right: 24px;
+  width: 46%;
+  border-radius: 58% 42% 0 0 / 70% 45% 0 0;
+  transform: rotate(-7deg);
+}
+
+main::after {
+  top: clamp(48px, 9vw, 100px);
+  right: 8%;
+  width: 39%;
+  border-color: rgb(238 214 161 / 29%);
+  border-radius: 46% 54% 0 0 / 52% 67% 0 0;
+  transform: rotate(-4deg);
+}
+
+.page-heading {
+  margin-bottom: clamp(28px, 5vw, 44px);
+  color: var(--poster-gold);
+  font-family: var(--poster-serif);
+  font-size: clamp(2.65rem, 7vw, 4.3rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.09em;
+}
+
+.page-heading::after {
+  content: "";
+  display: block;
+  width: 60px;
+  margin-top: 15px;
+  border-top: 1px solid rgb(238 214 161 / 68%);
+  transform: rotate(-2deg);
+}
+
+#msg {
+  color: var(--poster-gold);
+  line-height: 1.55;
+}
+
+.text-link {
+  color: var(--poster-gold);
+}
+
+.text-link:hover {
+  color: var(--poster-gold-light);
+}
+
+:is(a, button, input):focus-visible {
+  outline: 2px solid var(--poster-gold);
+  outline-offset: 3px;
+}
+
+.song-list {
+  gap: clamp(11px, 2vw, 17px);
+}
+
+.song-list a {
+  min-height: 76px;
+  padding: 15px 18px;
+  border: 1px solid var(--poster-line);
+  border-radius: var(--poster-edge);
+  background: var(--poster-panel);
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+.song-list span[aria-hidden] {
+  flex-shrink: 0;
+  color: var(--poster-gold);
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+}
+
+.song-list a:hover,
+.song-list a:focus-visible {
+  border-color: var(--poster-gold);
+  background: rgb(235 207 149 / 10%);
+}
+
+.song-list a:active {
+  background: rgb(235 207 149 / 17%);
+}
+
+.sing-page {
+  --poster-header-width: 1176px;
+}
+
+.sing-page header {
+  padding-block: 12px;
+}
+
+.sing-page main {
+  padding: clamp(16px, 3vh, 26px) clamp(20px, 3vw, 32px) 20px;
+}
+
+.sing-page main::before,
+.sing-page main::after {
+  height: 26px;
+}
+
+.sing-page main::before {
+  top: 18px;
+  width: 39%;
+}
+
+.sing-page main::after {
+  top: 34px;
+  width: 30%;
+}
+
+.sing-page .page-heading {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 20px);
+  margin-bottom: 16px;
+  font-size: clamp(1.75rem, 3.8vw, 2.75rem);
+  line-height: 1.2;
+  letter-spacing: 0.055em;
+}
+
+.sing-page .page-heading::after {
+  flex: 0 0 clamp(25px, 5vw, 64px);
+  margin-top: 0;
+}
+
+.sing-controls,
+#result {
+  border: 1px solid var(--poster-line);
+  border-radius: var(--poster-edge);
+  background: var(--poster-panel);
+}
+
+.sing-controls {
+  gap: 8px 10px;
+  padding: 10px clamp(12px, 2vw, 16px);
+  margin-bottom: 12px;
+}
+
+.sing-controls input:not([type=radio]),
+.sing-controls button,
+.difficulty label span {
+  border: 1px solid var(--poster-line);
+  background: var(--poster-inset);
+  color: var(--ink);
+}
+
+.sing-controls input::placeholder,
+#latency-status {
+  color: var(--muted);
+}
+
+.difficulty input:checked + span {
+  border-color: var(--poster-gold);
+  background: rgb(235 207 149 / 15%);
+  color: var(--poster-gold-light);
+}
+
+.difficulty input:focus-visible + span {
+  outline-color: var(--poster-gold);
+}
+
+.sing-controls button:not(:disabled):hover {
+  border-color: var(--poster-gold);
+}
+
+.sing-controls :is(#start, #stop),
+.action-link {
+  border-color: var(--poster-gold);
+  background: var(--poster-gold);
+  color: #273637;
+}
+
+.sing-controls :is(#start, #stop):not(:disabled):hover,
+.action-link:hover {
+  background: var(--poster-gold-light);
+}
+
+.lyrics,
+canvas {
+  border: 1px solid var(--poster-line);
+  border-radius: var(--poster-edge);
+  background: var(--poster-stage);
+}
+
+.sing-page .lyrics {
+  padding: clamp(10px, 2vh, 17px) 16px;
+  margin-bottom: 8px;
+}
+
+#lyric {
+  color: var(--poster-gold-light);
+  font-size: clamp(29px, 4vw, 48px);
+}
+
+#next-lyric {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: clamp(17px, 2.2vw, 23px);
+}
+
+.sing-page .status {
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.progress {
+  background: var(--poster-stage);
+}
+
+.sing-page .progress {
+  margin-top: 6px;
+}
+
+.sing-page #msg:not(:empty),
+.sing-page .hint {
+  margin-block: 6px 0;
+}
+
+.result-header h2,
+#result h3 {
+  color: var(--poster-gold-light);
+  font-family: var(--poster-serif);
+}
+
+.scores div,
+.note-results li {
+  border-color: var(--poster-line);
+  background: var(--poster-stage);
+}
+
+.scores .score-overall {
+  border-color: rgb(238 214 161 / 57%);
+  background: rgb(238 214 161 / 10%);
+}
+
+.scores .score-overall b {
+  color: var(--poster-gold-light);
+}
+
+.scores meter {
+  --poster-score-fill: var(--hit);
+  --poster-score-track: rgb(225 232 218 / 18%);
+  background: var(--poster-score-track);
+}
+
+.scores .score-overall meter {
+  --poster-score-fill: var(--poster-gold);
+}
+
+.scores meter::-webkit-meter-bar {
+  background: var(--poster-score-track);
+}
+
+.scores meter::-webkit-meter-optimum-value {
+  background: var(--poster-score-fill);
+}
+
+.scores meter::-moz-meter-bar {
+  background: var(--poster-score-fill);
+}
+
+.note-results .note-hit {
+  border-color: rgb(168 203 181 / 55%);
+}
+
+.note-results .note-miss {
+  border-color: rgb(242 192 141 / 55%);
+}
+
+@media (min-width: 900px) and (min-height: 600px) {
+  .sing-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+  }
+
+  .sing-page header {
+    flex: none;
+  }
+
+  .sing-page main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    min-height: 0;
+  }
+
+  .sing-page main > :not(canvas) {
+    flex-shrink: 0;
+  }
+
+  .sing-page canvas {
+    flex: 1 1 0;
+    min-height: 120px;
+    max-height: 440px;
+  }
+}
+
+@media (max-width: 520px) {
+  main::before {
+    width: 33%;
+  }
+
+  main::after {
+    width: 26%;
+  }
+
+  .sing-page main::before {
+    width: 26%;
+  }
+
+  .sing-page main::after {
+    width: 20%;
+  }
+}
