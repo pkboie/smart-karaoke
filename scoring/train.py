@@ -233,6 +233,8 @@ def main():
     ap.add_argument("--demo", action="store_true", help="用假資料測試流程（數字沒有意義）")
     ap.add_argument("--plot", action="store_true", help="輸出 ρ 長條圖與預測散佈圖至 experiments/results/")
     ap.add_argument("--scale", type=float, default=10.0, help="把模型輸出換算成 0–100 分（Acapella 是 0–10 分，所以 ×10）")
+    ap.add_argument("--prefix", default="", help="輸出檔名前綴（例如 v2_），避免覆蓋既有實驗結果")
+    ap.add_argument("--no-save-model", action="store_true", help="只輸出評估與圖表，不覆寫 models/*.joblib")
     args = ap.parse_args()
 
     if not args.demo and args.csv is None:
@@ -248,7 +250,7 @@ def main():
     ]
 
     drop_suffix = f"_drop_{'_'.join(args.drop_group)}" if args.drop_group else ""
-    tag = f"{args.target}{drop_suffix}"
+    tag = f"{args.prefix}{args.target}{drop_suffix}"
 
     print(f"目標：{args.target}（欄位：{target_col}）| 排除群組：{args.drop_group or '無'}")
     print(f"{len(df)} 筆資料、{df['song'].nunique()} 首歌、{len(feature_cols)} 個特徵\n")
@@ -266,8 +268,9 @@ def main():
         print(f"\n評估結果已存至：{csv_out}")
         save_plots(res_df, oof_preds, df, target_col, tag)
 
-    if args.demo:
-        print(f"\n（demo 模式不存模型）最佳：{best}")
+    if args.demo or args.no_save_model:
+        if args.demo:
+            print(f"\n（demo 模式不存模型）最佳：{best}")
         return
 
     import joblib
