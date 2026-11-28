@@ -2,7 +2,9 @@
 * { box-sizing: border-box; }
 body { margin: 0; font-family: system-ui, "Noto Sans TC", sans-serif; background: var(--bg); color: var(--ink); }
 header { padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; background: var(--panel); }
-h1 { margin: 0; font-size: 22px; }
+.brand { font-size: 20px; font-weight: 700; }
+.text-link { color: #acd0ff; font-size: 14px; text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid #acd0ff; outline-offset: 3px; }
 .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 14px; }
 select, input, button { font: inherit; padding: 6px 10px; border-radius: 6px; border: 1px solid #33405f; background: #0f1424; color: var(--ink); }
 input[type=number] { width: 80px; }
@@ -19,10 +21,18 @@ input[type=number] { width: 80px; }
 button { background: var(--target); border: none; cursor: pointer; min-height: 36px; }
 button:disabled { opacity: 0.4; cursor: default; }
 main { max-width: 1240px; margin: 0 auto; padding: 20px; }
-.status { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 18px; }
-.lyrics { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; min-width: 0; }
-#lyric { font-size: 28px; font-weight: 700; }
-#next-lyric { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+.page-width { max-width: 960px; padding-block: clamp(24px, 5vw, 48px); }
+.page-heading { margin: 0 0 20px; font-size: clamp(26px, 4vw, 38px); overflow-wrap: anywhere; }
+.sing-controls { padding: 14px; margin-bottom: 22px; border-radius: 12px; background: var(--panel); }
+.song-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.song-list a { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 64px; padding: 14px 16px; border: 1px solid #33405f; border-radius: 10px; background: var(--panel); color: var(--ink); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+.song-list a:hover { border-color: #78a5f4; background: #202d48; }
+.song-list span[aria-hidden] { color: #acd0ff; }
+.status { display: flex; justify-content: flex-end; margin-bottom: 8px; font-size: 18px; }
+.lyrics { padding: clamp(12px, 3vw, 26px); margin-bottom: 14px; border-radius: 12px; background: #0a1020; text-align: center; }
+.lyrics p { margin: 0; line-height: 1.3; min-height: 1.3em; overflow-wrap: anywhere; text-wrap: balance; }
+#lyric { color: #ffe083; font-size: clamp(34px, 6.3vw, 68px); font-weight: 800; letter-spacing: 0.04em; text-shadow: 0 2px 6px #000; }
+#next-lyric { margin-top: 8px; color: #b5bfd9; font-size: clamp(18px, 3vw, 28px); font-weight: 600; }
 #live { color: var(--muted); text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 canvas { width: 100%; background: var(--panel); border-radius: 12px; display: block; }
 .progress { height: 6px; background: var(--panel); border-radius: 3px; margin-top: 10px; overflow: hidden; }
@@ -30,8 +40,11 @@ canvas { width: 100%; background: var(--panel); border-radius: 12px; display: bl
 .hint { color: var(--muted); font-size: 13px; }
 #msg { color: var(--miss); font-weight: 600; }
 #msg:empty { margin: 0; }
-#result { margin-top: 24px; background: var(--panel); border-radius: 12px; padding: 20px; }
-#result h2 { margin-top: 0; }
+#result { background: var(--panel); border-radius: 12px; padding: clamp(14px, 3vw, 24px); }
+.result-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+.result-header h2 { margin: 0; font-size: 22px; overflow-wrap: anywhere; }
+.action-link { padding: 8px 12px; border-radius: 6px; background: #263858; color: #d5e5ff; text-decoration: none; }
+.action-link:hover { background: #334c76; }
 #result h3 { margin: 24px 0 8px; font-size: 16px; }
 .scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
 .scores div { background: var(--bg); border: 1px solid #2b3853; border-radius: 10px; padding: 14px; }
