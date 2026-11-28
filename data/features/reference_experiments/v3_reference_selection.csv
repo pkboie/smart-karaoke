@@ -1,0 +1,7 @@
+﻿song,reference_singer_id,reference_overall_performance,uses_test_song_labels
+song1,7,10.0,True
+song2,7,10.0,True
+song3,15,10.0,True
+song4,20,10.0,True
+song5,7,9.75,True
+song6,15,10.0,True
