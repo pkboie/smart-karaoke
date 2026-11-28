@@ -1,0 +1,5 @@
+﻿model,pooled_rho,rho_ci_low,rho_ci_high,per_song_rho,mae,mae_ci_low,mae_ci_high
+Baseline (Mean),-0.1157,-0.2841,0.0588,,1.8901,1.6224,2.1797
+Baseline (Pitch-only),0.1196,-0.0374,0.2725,0.0958,1.8619,1.5985,2.1341
+Ridge,0.4534,0.2897,0.6034,0.4265,1.5023,1.2841,1.7053
+RandomForest,0.5229,0.3666,0.6597,0.5763,1.4762,1.2319,1.7158
