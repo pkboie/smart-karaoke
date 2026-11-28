@@ -56,7 +56,10 @@ class MicProcessor extends AudioWorkletProcessor {
         frame[j] = this.buffer[index];
       }
 
-      this.port.postMessage(frame, [frame.buffer]);
+      // The center of the 2048-sample window on the shared AudioContext clock.
+      const endFrame = currentFrame + i + 1;
+      const contextTime = (endFrame - (this.bufferSize - 1) / 2) / sampleRate;
+      this.port.postMessage({ frame, contextTime }, [frame.buffer]);
     }
 
     return true;
